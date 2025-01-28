@@ -89,6 +89,7 @@ include_once("footer.php");
             e.preventDefault();
             var changeStatus = $(this).is(':checked');
             if(changeStatus == true){
+                
                 $('#updateShipping #f_name').val($('#updateBilling #f_name').val());
                 $('#updateShipping #phone_no').val($('#updateBilling #phone_no').val());
                 $('#updateShipping #address').val($('#updateBilling #address').val());
@@ -100,6 +101,77 @@ include_once("footer.php");
             }
             console.log($(this).val());
         });
+
+       
+
+$(document).on('submit', '#verifyEmail', function (e) {
+    e.preventDefault();
+
+    // Serialize the form data
+    var formData = $(this).serialize();
+
+    // AJAX call to send verification email
+    $.ajax({
+        url: "action.php",
+        method: "POST",
+        data: formData,
+        dataType: "JSON",
+        success: function (response) {
+            if (response.error) {
+                $('.emailMessage').html('<div class="alert alert-danger">' + response.error + '</div>');
+            } else {
+                $('.emailMessage').html('<div class="alert alert-success">' + response.success + '</div>');
+                $('#verificationCodeSection').show(); // Show the verification code input
+            }
+        },
+        error: function () {
+            $('.emailMessage').html('<div class="alert alert-danger">An error occurred. Please try again.</div>');
+        },
+    });
+});
+
+$(document).on('click', '#verifyCode', function (e) {
+    e.preventDefault();
+
+    // Get the verification code entered by the user
+    var inputCode = $('input[name="input_code"]').val();
+
+    // AJAX call to verify the code
+    $.ajax({
+        url: "verify_code.php",
+        method: "POST",
+        data: { input_code: inputCode },
+        dataType: "JSON",
+        success: function (response) {
+            if (response.error) {
+                $('.emailMessage').html('<div class="alert alert-danger">' + response.error + '</div>');
+            } else {
+                $('.emailMessage').html('<div class="alert alert-success">' + response.success + '</div>');
+
+                // Trigger email update after verification success
+                $.ajax({
+                    url: "update_email.php",
+                    method: "POST",
+                    data: { update: "updateEmail", new_email: $('input[name="email"]').val() },
+                    dataType: "JSON",
+                    success: function (updateResponse) {
+                        if (updateResponse.error) {
+                            $('.emailMessage').append('<div class="alert alert-danger">' + updateResponse.error + '</div>');
+                        } else {
+                            $('.emailMessage').append('<div class="alert alert-success">' + updateResponse.success + '</div>');
+                        }
+                    },
+                });
+            }
+        },
+        error: function () {
+            $('.emailMessage').html('<div class="alert alert-danger">An error occurred while verifying the code.</div>');
+        },
+    });
+});
+
+
+
 
         $(document).on('submit', '#updateAccount', function(e){
             e.preventDefault();

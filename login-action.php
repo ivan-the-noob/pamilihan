@@ -77,6 +77,7 @@ if(isset($_POST['form1'])) {
                         $user = $statement->fetch(PDO::FETCH_ASSOC);
                         $_SESSION['customer'] = $user;
                         $_SESSION['customer']['status'] = $cust_status;
+                        $_SESSION['customer']['email'] = $row['email']; 
                         $page = "";
                         if(isset($_GET['page'])){
                             $page = $_GET['page'];
@@ -96,6 +97,7 @@ if(isset($_POST['form1'])) {
                         $statement->execute([$cust_email]);
                         $user = $statement->fetch(PDO::FETCH_ASSOC);
                         $_SESSION['rider'] = $user;
+                        $_SESSION['rider']['email'] = $row['email'];
                         $response = [
                             'status' => 'success',
                             'message' => 'Login Successful!',

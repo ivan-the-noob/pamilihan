@@ -180,6 +180,38 @@ if(isset($_POST['forTotalAmount'])){
     }
     echo number_format($totalAmount, 2);
 }
+if (isset($_POST['email'])) {
+    $output = [];
+    $email = $_POST['email'];
+    $verification_code = $_POST['verification_code'];
+
+    try {
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Port = 587;
+        $mail->SMTPAuth = true;
+        $mail->Username = 'senanorlitoi@gmail.com'; // Your email
+        $mail->Password = 'wuaq ujdg bxjx wvsm'; // Your App Password
+        $mail->setFrom('senanorlitoi@gmail.com', 'Pamilihan');
+        $mail->addAddress($email, "Verification");
+        $mail->isHTML(true);
+        $mail->Subject = 'Your Verification Code';
+        $mail->Body = "Your verification code is <b>$verification_code</b>";
+
+        if ($mail->send()) {
+            $_SESSION['verification_code'] = $verification_code; // Store verification code in session
+            $output['success'] = "Verification code has been sent to your email.";
+        } else {
+            $output['error'] = "Failed to send the verification code.";
+        }
+    } catch (Exception $e) {
+        $output['error'] = "Mail error: {$mail->ErrorInfo}";
+    }
+
+    echo json_encode($output);
+}
+
 
 // For Update Profile
 if(isset($_POST['update'])){

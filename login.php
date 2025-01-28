@@ -43,6 +43,7 @@ if(isset($_SESSION['customer'])){
 					<input type="checkbox" name="showPassword" style="cursor: pointer;" id="showPassword">
 					<label for="showPassword" style="cursor: pointer;m">Show Password</label>
 				</div>
+				<a href="forgot.php">Forgot Password?</a>
                 <div class="col-md-12">
                 	<div class="form-group mt-4">
 					<div class="radio">

@@ -10,20 +10,17 @@ if(isset($_GET['email']) && isset($_GET['token'])){
     ];
     $res = $c->countData($pdo, $sql, $p);
     if($res > 0){
-        // GET USER ID
         $getVal = $c->fetchData($pdo, $sql, $p);
         if($getVal){
             foreach($getVal as $row){
                 $getUserId = $row['user_id'];
             }
-                // UPDATE THE CUSTOMER STATUS TO 1
             $upd = "UPDATE tbl_customer SET cust_status='1' WHERE user_id=:u_id";
             $p = [
                 ':u_id'     =>  $getUserId
             ];
             $res1 = $c->updateData($pdo, $upd, $p);
             if($res1 == true){
-                // UPDATE THE USER TO ACTIVE
                 $upd1 = "UPDATE tbl_user SET status='Active' WHERE id=:u_id";
                 $p1 = [
                     ':u_id'     =>  $getUserId

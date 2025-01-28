@@ -1,37 +1,7 @@
     <?php
     if(isset($_SESSION['customer'])):
     ?>
-    <button class="chat-button" id="chatToggleButton" onclick="toggleChat()">💬<span id="countUnreadMessages">10</span></button>
-
-    <div class="chat-overlay" id="chatOverlay">
-        <div class="chat-app">
-            <div class="user-list">
-                <h5 class="text-center"><span class="text-center">All Messages</span></h5><hr/>
-                <div class="user" onclick="selectUser('User1')">
-                    <img class="img-thumbnail" src="assets/uploads/user-user.png" alt="User 1">
-                    <span>User 1</span>
-                </div>
-            </div>
-            <div class="chat-container">
-                <div class="chat-header" id="chatHeader">
-                    Chat with <span id="chatUserName">...</span>
-                    <button class="close-button" onclick="closeChat()">×</button>
-                </div>
-                <div class="messages" id="messages">
-                    <span style="text-align: center; margin-top: 15%;">Select a user...</span>
-                </div>
-                <form method="POST" id="sendaMessage">
-                  <div id="input-container" style="display: none;">
-                      <!-- <p class="text-center">Chat session ended.</p> -->
-                      <div class="input-container">
-                          <input type="text" id="messageInput" placeholder="Type a message...">
-                          <button type="submit" onclick="sendMessage()">Send</button>
-                      </div>
-                  </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    
     <?php
     endif;
     ?>

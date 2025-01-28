@@ -72,14 +72,36 @@ if(isset($_SESSION['customer'])){
                     <b>Update Account</b>
                 </div>
                 <hr/>
+                <div class="container mt-5">
+                    <div class="emailMessage"></div>
+                    <form id="verifyEmail" method="POST">
+                        <div class="form-group">
+                            <label for="email">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" name="email" value="<?= $email; ?>" placeholder="Enter your email..." required>
+                        </div>
+                        <input type="hidden" name="verification_code" value="<?= rand(100000, 999999); ?>">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">Send Verification Code</button>
+                        </div>
+                    </form>
+                    <div id="verificationCodeSection" style="display: none;">
+                        <div class="form-group mt-3">
+                            <label for="verification_code">Enter Verification Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="input_code" placeholder="Enter the code sent to your email..." required>
+                        </div>
+                        <button id="verifyCode" class="btn btn-success btn-block">Verify Code</button>
+                    </div>
+                </div>
+
+
+                <div class="form-group mt-3" id="verificationCodeSection" style="display: none;">
+                    <label for="input_code">Verification Code</label>
+                    <input type="text" class="form-control" name="input_code" placeholder="Enter verification code..." required>
+                    <button id="verifyCode" class="btn btn-success mt-2">Verify Code</button>
+                </div>
                 <form id="updateAccount" method="POST">
                     <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="">Email <span class="text-danger">*</span></label>
-                                <input type="email" class="form-control" name="email" value="<?= $email; ?>" placeholder="Email address..." readonly>
-                            </div>
-                        </div>
+                       
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="">Full Name <span class="text-danger">*</span></label>
@@ -100,69 +122,7 @@ if(isset($_SESSION['customer'])){
                     </div>
                 </form>
             </div>
-            <div class="col-md-3 ftco-animate p-3 m-2 border">
-                <div class="mt-3">
-                    <div class="billingMessage">
-                    </div>
-                    <b>Update Billing Address</b>
-                </div>
-                <hr/>
-                <form method="POST" id="updateBilling">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="">Full Name <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="f_name" name="B_fname" value="<?= $B_fullName; ?>" placeholder="Full name...">
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="">Phone No. <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" maxlength="11" id="phone_no" name="B_phone" value="<?= $B_phone; ?>" placeholder="Phone no...">
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="">Country</label>
-                                <input type="text" class="form-control" id="country" name="B_country" value="Philippines" style="background-color: lightgray !important;" placeholder="Country..." readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="">Address <span class="text-danger">*</span></label>
-                                <textarea rows="6" class="form-control" id="bAddress" name="B_address" placeholder="House No./Lot No., Street, Barangay"><?= $B_address; ?></textarea>
-                                <small><b>Format: </b>House No./Lot No., Street, Barangay</small>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="">City <span class="text-danger">*</span></label>
-                                <select name="B_city" class="form-control" id="city">
-                                    <option value="" selected>Select an option</option>
-                                    <option value="Palayan" <?php if($B_city == 'Palayan'){ echo 'selected'; } ?>>Palayan</option>
-                                    <option value="Cavite" <?php if($B_city == 'Cavite'){ echo 'selected'; } ?>>Cavite</option>
-                                    <option value="Taguig" <?php if($B_city == 'Taguig'){ echo 'selected'; } ?>>Taguig</option>
-                                    <option value="Manila" <?php if($B_city == 'Manila'){ echo 'selected'; } ?>>Manila</option>
-                                    <option value="Davao" <?php if($B_city == 'Davao'){ echo 'selected'; } ?>>Davao</option>
-                                    <option value="Muntinlupa" <?php if($B_city == 'Muntinlupa'){ echo 'selected'; } ?>>Muntinlupa</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-12" hidden>
-                            <div class="form-group">
-                                <div class="checkbox">
-                                    <label for="sameAsShipping"><input type="checkbox" class="mr-2" name="sameAsShipping" value="" id="sameAsShipping">Use this address for shipping address.</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <input type="submit" class="btn btn-success btn-block" style="border-radius: 5px !important;" name="submit" value="Update Billing">
-                            </div>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            
             <div class="col-md-3 ftco-animate p-3 m-2 border">
                 <div class="mt-3">
                     <div class="shippingMessage">
@@ -198,18 +158,29 @@ if(isset($_SESSION['customer'])){
                             </div>
                         </div>
                         <div class="col-md-12">
-                            <div class="form-group">
-                                <label for="">City <span class="text-danger">*</span></label>
-                                <select name="S_city" class="form-control" id="city">
-                                    <option value="" selected>Select an option</option>
-                                    <option value="Palayan" <?php if($S_city == 'Palayan'){ echo 'selected'; } ?>>Palayan</option>
-                                    <option value="Cavite" <?php if($S_city == 'Cavite'){ echo 'selected'; } ?>>Cavite</option>
-                                    <option value="Taguig" <?php if($S_city == 'Taguig'){ echo 'selected'; } ?>>Taguig</option>
-                                    <option value="Manila" <?php if($S_city == 'Manila'){ echo 'selected'; } ?>>Manila</option>
-                                    <option value="Davao" <?php if($S_city == 'Davao'){ echo 'selected'; } ?>>Davao</option>
-                                    <option value="Muntinlupa" <?php if($S_city == 'Muntinlupa'){ echo 'selected'; } ?>>Muntinlupa</option>
-                                </select>
-                            </div>
+                        <div class="form-group">
+                            <label for="">Barangay <span class="text-danger">*</span></label>
+                            <select name="S_city" class="form-control" id="city">
+                                <option value="" selected>Select an option</option>
+                                <option value="Brgy. Salcedo 1" <?php if($S_city == 'Brgy. Salcedo 1'){ echo 'selected'; } ?>>Brgy. Salcedo 1</option>
+                                <option value="Brgy. Salcedo 2" <?php if($S_city == 'Brgy. Salcedo 2'){ echo 'selected'; } ?>>Brgy. Salcedo 2</option>
+                                <option value="Brgy. San Rafael 1" <?php if($S_city == 'Brgy. San Rafael 1'){ echo 'selected'; } ?>>Brgy. San Rafael 1</option>
+                                <option value="Brgy. San Rafael 2" <?php if($S_city == 'Brgy. San Rafael 2'){ echo 'selected'; } ?>>Brgy. San Rafael 2</option>
+                                <option value="Brgy. San Rafael 3" <?php if($S_city == 'Brgy. San Rafael 3'){ echo 'selected'; } ?>>Brgy. San Rafael 3</option>
+                                <option value="Brgy. San Rafael 4" <?php if($S_city == 'Brgy. San Rafael 4'){ echo 'selected'; } ?>>Brgy. San Rafael 4</option>
+                                <option value="Brgy. San Juan 1" <?php if($S_city == 'Brgy. San Juan 1'){ echo 'selected'; } ?>>Brgy. San Juan 1</option>
+                                <option value="Brgy. San Juan 2" <?php if($S_city == 'Brgy. San Juan 2'){ echo 'selected'; } ?>>Brgy. San Juan 2</option>
+                                <option value="Brgy. San Antonio 1" <?php if($S_city == 'Brgy. San Antonio 1'){ echo 'selected'; } ?>>Brgy. San Antonio 1</option>
+                                <option value="Brgy. San Antonio 2" <?php if($S_city == 'Brgy. San Antonio 2'){ echo 'selected'; } ?>>Brgy. San Antonio 2</option>
+                                <option value="Brgy. Sta Rosa 1" <?php if($S_city == 'Brgy. Sta Rosa 1'){ echo 'selected'; } ?>>Brgy. Sta Rosa 1</option>
+                                <option value="Brgy. Sta Rosa 2" <?php if($S_city == 'Brgy. Sta Rosa 2'){ echo 'selected'; } ?>>Brgy. Sta Rosa 2</option>
+                                <option value="Brgy. San Jose 1" <?php if($S_city == 'Brgy. San Jose 1'){ echo 'selected'; } ?>>Brgy. San Jose 1</option>
+                                <option value="Brgy. San Jose 2" <?php if($S_city == 'Brgy. San Jose 2'){ echo 'selected'; } ?>>Brgy. San Jose 2</option>
+                                <option value="Brgy. Magdiwang" <?php if($S_city == 'Brgy. Magdiwang'){ echo 'selected'; } ?>>Brgy. Magdiwang</option>
+                                <option value="Brgy. Poblacion" <?php if($S_city == 'Brgy. Poblacion'){ echo 'selected'; } ?>>Brgy. Poblacion</option>
+                            </select>
+                        </div>
+
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">

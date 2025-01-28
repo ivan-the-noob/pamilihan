@@ -1,4 +1,8 @@
-<?php require_once('header.php'); ?>
+
+<?php require_once('header.php'); 
+?>
+
+ 
 
 <section class="content-header">
 	<h1>Dashboard</h1>
@@ -43,6 +47,12 @@ $total_subscriber = $statement->rowCount();
 $statement = $pdo->prepare("SELECT * FROM tbl_shipping_cost");
 $statement->execute();
 $available_shipping = $statement->rowCount();
+
+if (isset($_SESSION['email']) && isset($_SESSION['id'])) {
+
+  $user_email = $_SESSION['email'];
+  $user_id = $_SESSION['id'];
+}
 
 if($myRole == "Admin"){
   $statement = $pdo->prepare("SELECT * FROM tbl_payment WHERE payment_status=?");
@@ -163,22 +173,28 @@ if($myRole == "Rider"){
                                   <td><?= $no1++; ?></td>
                                   <td><?= $row['order_id']; ?></td>
                                   <td>
-                                      <?php
-                                      $sql1 = "SELECT s.* FROM tbl_user u JOIN tbl_shipping_address s ON u.id=s.user_id  WHERE u.id=:customer_id";
+                                  <?php
+                                      $sql1 = "SELECT u.email, s.* 
+                                              FROM tbl_user u 
+                                              JOIN tbl_shipping_address s ON u.id = s.user_id  
+                                              WHERE u.id = :customer_id";
                                       $p1 = [
-                                          ":customer_id"      =>  $row['customer_id']
+                                          ":customer_id" => $row['customer_id']
                                       ];
                                       $res1 = $c->fetchData($pdo, $sql1, $p1);
+
                                       foreach($res1 as $row1){
                                           ?>
                                           <ul>
-                                              <li><b>Name: </b><span><?= $row1['full_name'];?></span></li>
-                                              <li><b>Phone: </b><span><?= $row1['phone'];?></span></li>
-                                              <li><b>Address: </b><span><?= $row1['address']; ?>, <?= $row1['city'];?></span></li>
+                                              <li><b>Name: </b><span><?= $row1['full_name']; ?></span></li>
+                                              <li><b>Phone: </b><span><?= $row1['phone']; ?></span></li>
+                                              <li><b>Address: </b><span><?= $row1['address']; ?>, <?= $row1['city']; ?></span></li>
+                                              <li><b>Email: </b><span><?= $row1['email']; ?></span></li>  
                                           </ul>
                                           <?php
                                       }
                                       ?>
+
                                   </td>
                                   <td>
 
@@ -257,7 +273,174 @@ if($myRole == "Rider"){
                                       }
                                       if($row['status'] != "Pending" && $row['status'] != "Cancelled"){
                                           ?>
-                                          <button class="btn btn-sm btn-block btn-success showMessage" data-toggle="modal" data-target="#showMessage" data-user="<?= $row1['full_name']; ?>" data-id="<?= $row1['id']; ?>" data-rider="<?= $_SESSION['user']['id']; ?>" data-name="<?= $_SESSION['user']['full_name']; ?>" >Message</button>
+                                    <button class="btn btn-sm btn-block btn-success showMessage" 
+                                      data-toggle="modal" 
+                                      data-target="#showMessages" 
+                                      data-user="<?= $row1['full_name']; ?>" 
+                                      data-id="<?= $row1['id']; ?>" 
+                                      data-rider="<?= $_SESSION['user']['id']; ?>" 
+                                      data-name="<?= $_SESSION['user']['full_name']; ?>" 
+                                      data-sender-email="<?= $_SESSION['user']['email']; ?>"
+                                      data-receiver-id="<?= $row1['id']; ?>" 
+                                      data-receiver-email="<?= $row1['email']; ?>" 
+                                      id="sendMessageButton">Message</button>
+
+                                     
+
+
+                                     
+
+                                      <div class="modal fade" id="showMessages" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                              <div class="modal-dialog">
+                                                  <div class="modal-content">
+                                                      <div class="modal-body">
+                                                          <div class="chat-container">
+                                                              <div class="chat-header" id="chatHeader">
+                                                                  Chat with <span id="chatUserName">...</span>
+                                                                  <button class="close-button" data-dismiss="modal" aria-hidden="true" onclick="closeChat()">×</button>
+                                                              </div>
+
+                                                             
+                                                              <div id="messageContainer" class="message-container">
+                                                              <?php
+                                                              if (isset($_SESSION['email'])) {
+                                                                  $senderEmail = $_SESSION['email'];
+                                                              } else {
+                                                                  echo 'No email found in session'; 
+                                                                  exit;
+                                                              }
+
+                                                             
+                                                              $query = "SELECT * FROM messages WHERE sender_email = :sender_email OR receiver_email = :sender_email ORDER BY created_at ASC";
+                                                              $stmt = $pdo->prepare($query);
+                                                              $stmt->bindParam(':sender_email', $senderEmail);
+                                                              $stmt->execute();
+
+                                                              if ($stmt->rowCount() > 0) {
+                                                                  $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                       
+                                                                  foreach ($messages as $message) {
+                                                                      $messageDiv = '<div class="message-container">';
+                                                                      
+                                                                     
+                                                                      if ($message['sender_email'] === $senderEmail) {
+                                                                          $messageDiv .= '<div class="message-left">' . htmlspecialchars($message['message']) . '</div>';
+                                                                      }
+                                                                      
+                                                                     
+                                                                      if ($message['receiver_email'] === $senderEmail) {
+                                                                          $messageDiv .= '<div class="message-right">' . htmlspecialchars($message['message']) . '</div>';
+                                                                      }
+
+                                                               
+                                                                      $messageDiv .= '</div>';
+                                                                      
+                                                             
+                                                                      echo $messageDiv;
+                                                                  }
+                                                              } else {
+                                                                  echo 'No messages found';
+                                                              }
+                                                              ?>
+                                                              </div>
+
+                                                              <form method="POST" id="sendaMessage">
+                                                                  <div id="input-container">
+                                                                      <div class="input-containers">
+                                                                          <input type="text" id="messageInput" name="message" placeholder="Type a message..." required>
+                                                                          <button type="submit">Send</button>
+                                                                      </div>
+                                                                  </div>
+                                                              </form>
+                                                          </div>
+                                                      </div>
+                                                      <div class="modal-footer">
+                                                          <button type="button" class="btn btn-default" data-dismiss="modal" onclick="closeChat()">Close</button>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+
+                                          <script>
+                                          function loadMessages(receiverEmail, senderEmail) {
+                                              const messageContainer = document.getElementById("messageContainer");
+                                              
+                                              messageContainer.innerHTML = '';
+
+                                              const xhr = new XMLHttpRequest();
+                                              xhr.open("GET", "fetch_messages.php?receiver_email=" + receiverEmail + "&sender_email=" + senderEmail, true);
+                                              
+                                              xhr.onload = function() {
+                                                  if (xhr.status === 200) {
+                                                      const messages = JSON.parse(xhr.responseText); 
+
+                                                      messages.forEach(function(message) {
+                                                          const messageDiv = document.createElement("div");
+                                                          messageDiv.classList.add("message");
+                                                          
+                                                          if (message.sender_email === senderEmail) {
+                                                              messageDiv.classList.add("sender");
+                                                          } else {
+                                                              messageDiv.classList.add("receiver"); 
+                                                          }
+
+                                                          messageDiv.textContent = message.message; 
+                                                          messageContainer.appendChild(messageDiv);
+                                                      });
+
+                                                      messageContainer.scrollTop = messageContainer.scrollHeight;
+                                                  } else {
+                                                      console.error("Error fetching messages");
+                                                  }
+                                              };
+
+                                              xhr.send(); 
+                                          }
+
+                                          function showChat(receiverEmail, senderEmail, receiverName) {
+                                              document.getElementById("chatUserName").textContent = receiverName;
+                                              loadMessages(receiverEmail, senderEmail);
+
+                                              $('#showMessages').modal('show');
+                                          }
+
+                                          document.getElementById('sendaMessage').addEventListener('submit', function(e) {
+                                              e.preventDefault(); 
+                                              
+                                              const messageInput = document.getElementById('messageInput');
+                                              const message = messageInput.value;
+                                              const receiverEmail = receiverEmail; 
+                                              const senderEmail = '<?php echo $_SESSION["email"]; ?>'; 
+
+                                              const xhr = new XMLHttpRequest();
+                                              xhr.open("POST", "send_message.php", true); 
+
+                                              xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                                              xhr.onload = function() {
+                                                  if (xhr.status === 200) {
+                                                      messageInput.value = '';
+
+                                                      const messageContainer = document.getElementById('messageContainer');
+                                                      const messageDiv = document.createElement("div");
+                                                      messageDiv.classList.add("message", "sender");
+                                                      messageDiv.textContent = message;
+                                                      messageContainer.appendChild(messageDiv);
+
+                                                      messageContainer.scrollTop = messageContainer.scrollHeight;
+                                                  } else {
+                                                      console.error("Error sending message");
+                                                  }
+                                              };
+
+                                              xhr.send("message=" + encodeURIComponent(message) + "&receiver_email=" + encodeURIComponent(receiverEmail) + "&sender_email=" + encodeURIComponent(senderEmail));
+                                          });
+                                          </script>
+
+
+
+                                      </div>
+
                                           <?php
                                           $sql101 = "SELECT * FROM tbl_shipping_address WHERE user_id=:id";
                                           $p101 = [
@@ -496,35 +679,8 @@ if($myRole == "Rider"){
           </div>
     </div>
 </div>
-<div class="modal fade" id="showMessage" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-body">
-              <div class="chat-container">
-                  <div class="chat-header" id="chatHeader">
-                      Chat with <span id="chatUserName">...</span>
-                      <button class="close-button" data-dismiss="modal" aria-hidden="true" onclick="closeChat()">×</button>
-                  </div>
-                  <div class="messages" id="messages">
-                      <span style="text-align: center; margin-top: 15%;">Loading...</span>
-                  </div>
-                  <form method="POST" id="sendaMessage">
-                    <div id="input-container" style="display: none;">
-                        <!-- <p class="text-center">Chat session ended.</p> -->
-                        <div class="input-container">
-                            <input type="text" id="messageInput" placeholder="Type a message...">
-                            <button type="submit">Send</button>
-                        </div>
-                    </div>
-                  </form>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-          </div>
-    </div>
-</div>
+
+
 <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -556,6 +712,54 @@ if($myRole == "Rider"){
 
 <!-- Leaflet Polyline Encoded JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.polylineencoded/1.0.0/leaflet.polylineencoded.js"></script>
+
+<script>
+    document.getElementById("sendaMessage").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent the default form submission
+
+        const messageInput = document.getElementById("messageInput");
+        const message = messageInput.value.trim();
+
+        // Get the receiver details from the button (this assumes the button has been clicked before form submission)
+        const button = document.getElementById("sendMessageButton");
+        const senderEmail = button.getAttribute("data-sender-email");
+        const receiverEmail = button.getAttribute("data-receiver-email"); // Corrected to data-receiver-email
+        const receiverUserId = button.getAttribute("data-receiver-id");
+
+        if (message && receiverEmail && receiverUserId) {
+            // Prepare data to send to the server
+            const formData = new FormData();
+            formData.append("message", message);
+            formData.append("receiver_email", receiverEmail); // Add receiver email
+            formData.append("receiver_user_id", receiverUserId); // Add receiver user ID
+            formData.append("sender_email", senderEmail); // Add sender email (if needed)
+
+            // Send AJAX request to send_message.php
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "send_message.php", true);
+
+            // Handle the response from the server
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    const response = JSON.parse(xhr.responseText); // Assuming JSON response
+                    console.log(response);  // Debugging response
+
+                    if (response.status === "success") {
+                        messageInput.value = '';  
+                    } else {
+                        alert("Failed to send message: " + response.message);  // Display error message from the response
+                    }
+                } else {
+                    alert("Error occurred while sending message.");
+                }
+            };
+
+            xhr.send(formData); // Send the form data to the server
+        } else {
+            alert("Please enter a message and ensure receiver details are correct.");
+        }
+    });
+</script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {

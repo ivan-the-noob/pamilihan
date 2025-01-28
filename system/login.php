@@ -34,6 +34,8 @@ if(isset($_POST['form1'])) {
 				} else {       
 				
 					$_SESSION['user'] = $row;
+					$_SESSION['email'] = $row['email']; 
+					$_SESSION['id'] = $row['id'];
 					header("location: index.php");
 				}
 			}else{

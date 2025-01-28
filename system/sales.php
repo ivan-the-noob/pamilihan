@@ -253,128 +253,143 @@ catch( PDOException $exception ) {
             </form>
 
           <hr>
+<?php
+$from_date = $_GET['from_date'] ?? date('Y-m-01');
+$to_date = $_GET['to_date'] ?? date('Y-m-d');
 
-          <!-- PHP for Summary Metrics and Chart Data -->
-          <?php
-          $from_date = $_GET['from_date'] ?? date('Y-m-01');
-          $to_date = $_GET['to_date'] ?? date('Y-m-d');
+// Fetch summary metrics
+$chart_labels = [];
+$chart_sales = [];
+$chart_transactions = [];
+$total_sales = 0;
+$date = "";
+if($_SESSION['user']['role'] == "Admin"){
+    $sql = "SELECT DISTINCT order_id FROM tbl_purchase_item";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+}
+if($_SESSION['user']['role'] == "Seller"){
+    $sql = "SELECT DISTINCT order_id FROM tbl_purchase_item WHERE seller_id=:seller_id";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([
+        ':seller_id'    =>  $_SESSION['user']['id']
+    ]);
+}
+$res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            // Fetch summary metrics
-            $chart_labels = [];
-            $chart_sales = [];
-            $chart_transactions = [];
-            $total_sales = 0;
-            $date = "";
-            if($_SESSION['user']['role'] == "Admin"){
-                $sql = "SELECT DISTINCT order_id FROM tbl_purchase_item";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute();
-            }
-            if($_SESSION['user']['role'] == "Seller"){
-                $sql = "SELECT DISTINCT order_id FROM tbl_purchase_item WHERE seller_id=:seller_id";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute([
-                    ':seller_id'    =>  $_SESSION['user']['id']
-                ]);
-            }
-            $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+if($stmt->rowCount() > 0){
+    $query = "SELECT DISTINCT p.*, 
+                     DATE_FORMAT(FROM_UNIXTIME(p.date_and_time), '%Y-%m') AS month_year, 
+                     SUM(p.total_amount) AS totalAmount, 
+                     COUNT(p.order_id) AS countOrder, 
+                     o.status as shipped_status, 
+                     o.date_and_time as shipped_date, 
+                     u.full_name, u.email 
+              FROM tbl_purchase_payment p 
+              JOIN tbl_purchase_order o ON p.order_id=o.order_id 
+              JOIN tbl_user u ON o.customer_id=u.id 
+              WHERE p.date_and_time >= :from_date AND p.date_and_time <= :to_date 
+              GROUP BY month_year ORDER BY p.date_and_time DESC";
+    $statement = $pdo->prepare($query);
+    $statement->execute([
+        ':from_date' => strtotime("$from_date 00:00:00"),
+        ':to_date' =>  strtotime("$to_date 23:59:59")
+    ]);
+    $result = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-            if($stmt->rowCount() > 0){
-                $query = "SELECT DISTINCT p.*, DATE(FROM_UNIXTIME(p.date_and_time)) AS date1, SUM(p.total_amount) AS totalAmount, COUNT(p.order_id) AS countOrder, o.status as shipped_status, o.date_and_time as shipped_date, u.full_name, u.email FROM tbl_purchase_payment p JOIN tbl_purchase_order o ON p.order_id=o.order_id JOIN tbl_user u ON o.customer_id=u.id WHERE p.date_and_time >= :from_date AND p.date_and_time <= :to_date GROUP BY date1 ORDER BY p.date_and_time DESC";
-                $statement = $pdo->prepare($query);
-                $statement->execute([
-                    ':from_date' => strtotime("$from_date 00:00:00"),
-                    ':to_date' =>  strtotime("$to_date 23:59:59")
-                ]);
-                $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-                
-                $i = 1;
-                if($statement->rowCount() > 0){
-                    foreach($res as $val){
-                        foreach ($result as $row) {
-                            if($row['order_id'] == $val['order_id']){
-                                $date = $row['date1'];
-                                $chart_labels[] = $date;
-                                $chart_sales[] = $row['totalAmount'];
-                                $total_sales += $row['totalAmount'];
-                                $chart_transactions[] = $row['countOrder'];
-                                $i++;
-                            }
-                        }
-                    }
+    $i = 1;
+    if($statement->rowCount() > 0){
+        foreach($res as $val){
+            foreach ($result as $row) {
+                if($row['order_id'] == $val['order_id']){
+                    $date = $row['month_year'];
+                    $chart_labels[] = $date;
+                    $chart_sales[] = $row['totalAmount'];
+                    $total_sales += $row['totalAmount'];
+                    $chart_transactions[] = $row['countOrder'];
+                    $i++;
                 }
             }
-          ?>
+        }
+    }
+}
+?>
 
-          <!-- Summary Metrics -->
-          <h4>Summary Metrics</h4>
-          <p><strong>Total Sales:</strong> <?php echo number_format($total_sales, 2); ?></p>
-          <canvas id="salesChart" width="400" height="200"></canvas>
-          <hr>
+<!-- Summary Metrics -->
+<h4>Summary Metrics</h4>
+<p><strong>Total Sales:</strong> <?php echo number_format($total_sales, 2); ?></p>
+<canvas id="salesChart" width="400" height="200"></canvas>
+<hr>
 
-          <!-- Detailed Report -->
-          <h4>Detailed Sales Report</h4>
-          <table id="example1" class="table table-bordered table-hover table-striped">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Customer Name</th>
-                <th>Payment Date</th>
-                <th>Paid Amount</th>
-                <th>Payment Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php
-              $result = "";
+<!-- Detailed Report -->
+<h4>Detailed Sales Report</h4>
+<table id="example1" class="table table-bordered table-hover table-striped">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Customer Name</th>
+            <th>Payment Date</th>
+            <th>Paid Amount</th>
+            <th>Payment Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        if($_SESSION['user']['role'] == "Seller"){
+            $query = "SELECT p.date_and_time as payment_date, 
+                             p.total_amount as paid_amount, 
+                             p.transaction_status as payment_status, 
+                             u.full_name as customer_name  
+                      FROM tbl_purchase_payment p 
+                      JOIN tbl_purchase_order o ON p.order_id=o.order_id 
+                      JOIN tbl_user u ON o.customer_id=u.id 
+                      WHERE p.date_and_time >= :from_date AND p.date_and_time <= :to_date 
+                      ORDER BY p.date_and_time DESC";
+            $statement = $pdo->prepare($query);
+            $statement->execute([
+                ':from_date' => strtotime("$from_date 00:00:00"),
+                ':to_date' =>  strtotime("$to_date 23:59:59")
+            ]);
+        }
+        if($_SESSION['user']['role'] == "Admin"){
+            $query = "SELECT p.date_and_time as payment_date, 
+                             p.total_amount as paid_amount, 
+                             p.transaction_status as payment_status, 
+                             u.full_name as customer_name  
+                      FROM tbl_purchase_payment p 
+                      JOIN tbl_purchase_order o ON p.order_id=o.order_id 
+                      JOIN tbl_user u ON o.customer_id=u.id 
+                      WHERE p.date_and_time >= :from_date AND p.date_and_time <= :to_date 
+                      ORDER BY p.date_and_time DESC";
+            $statement = $pdo->prepare($query);
+            $statement->execute([
+                ':from_date' => strtotime("$from_date 00:00:00"),
+                ':to_date' =>  strtotime("$to_date 23:59:59")
+            ]);
+        }
 
-              if($_SESSION['user']['role'] == "Seller"){
-                $query = "SELECT p.date_and_time as payment_date, p.total_amount as paid_amount, p.transaction_status as payment_status, u.full_name as customer_name  FROM tbl_purchase_payment p JOIN tbl_purchase_order o ON p.order_id=o.order_id JOIN tbl_user u ON o.customer_id=u.id WHERE p.date_and_time >= :from_date AND p.date_and_time <= :to_date ORDER BY p.date_and_time DESC";
-                $statement = $pdo->prepare($query);
-                $statement->execute([
-                  ':from_date' => strtotime("$from_date 00:00:00"),
-                  ':to_date' =>  strtotime("$to_date 23:59:59")
-                ]);
-              }
-              if($_SESSION['user']['role'] == "Admin"){
-                $query = "SELECT p.date_and_time as payment_date, p.total_amount as paid_amount, p.transaction_status as payment_status, u.full_name as customer_name  FROM tbl_purchase_payment p JOIN tbl_purchase_order o ON p.order_id=o.order_id JOIN tbl_user u ON o.customer_id=u.id WHERE p.date_and_time >= :from_date AND p.date_and_time <= :to_date ORDER BY p.date_and_time DESC";
-                $statement = $pdo->prepare($query);
-                $statement->execute([
-                  ':from_date' => strtotime("$from_date 00:00:00"),
-                  ':to_date' =>  strtotime("$to_date 23:59:59")
-                ]);
-              }
+        $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+        if($statement->rowCount() > 0){
+            $i = 0;
+            foreach ($result as $row) {
+                $i++;
+                ?>
+                <tr>
+                    <td><?php echo $i; ?></td>
+                    <td><?php echo htmlspecialchars($row['customer_name']); ?></td>
+                    <td><?php echo htmlspecialchars(date("M. d, Y h:i:s A", $row['payment_date'])); ?></td>
+                    <td><?php echo number_format($row['paid_amount'], 2); ?></td>
+                    <td><?php echo htmlspecialchars($row['payment_status']); ?></td>
+                </tr>
+                <?php
+            }
+        } else {
+            echo "<tr><td colspan='6'>No sales data found for the selected date range.</td></tr>";
+        }
+        ?>
+    </tbody>
+</table>
 
-              $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-              if($statement->rowCount() > 0){
-                if ($result) {
-                    $i = 0;
-                    foreach ($result as $row) {
-                        $i++;
-                        ?>
-                        <tr>
-                          <td><?php echo $i; ?></td>
-                          <td><?php echo htmlspecialchars($row['customer_name']); ?></td>
-                          <td><?php echo htmlspecialchars(date("M. d, Y h:i:s A", $row['payment_date'])); ?></td>
-                          <td><?php echo number_format($row['paid_amount'], 2); ?></td>
-                          <td><?php echo htmlspecialchars($row['payment_status']); ?></td>
-                        </tr>
-                        <?php
-                    }
-                } else {
-                    echo "<tr><td colspan='6'>No sales data found for the selected date range.</td></tr>";
-                }
-              }
-              ?>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Chart.js Script -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -382,18 +397,18 @@ document.addEventListener("DOMContentLoaded", function () {
     const salesChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: <?php echo json_encode($chart_labels); ?>, // Dates
+            labels: <?php echo json_encode($chart_labels); ?>,
             datasets: [
                 {
                     label: 'Total Sales',
-                    data: <?php echo json_encode($chart_sales); ?>, // Sales amounts
+                    data: <?php echo json_encode($chart_sales); ?>, 
                     backgroundColor: 'rgba(75, 192, 192, 0.6)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
                 },
                 {
                     label: 'Total Transactions',
-                    data: <?php echo json_encode($chart_transactions); ?>, // Transactions counts
+                    data: <?php echo json_encode($chart_transactions); ?>, 
                     backgroundColor: 'rgba(153, 102, 255, 0.6)',
                     borderColor: 'rgba(153, 102, 255, 1)',
                     borderWidth: 1
@@ -414,9 +429,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-
-
-
 
 
 <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">

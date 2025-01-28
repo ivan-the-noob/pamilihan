@@ -493,44 +493,7 @@
         // console.error('WebSocket error:', error);
     };
 	
-	const message = {};
-	$(document).ready(function(){
-		$(document).on('click', '.showMessage', function(e){
-			e.preventDefault();
-			$('#chatUserName').html($(this).data('user'));
-			currentUser = 'User1';
-			myName = $(this).data('rider');
-			messages = {
-				'User1': [{ text: "Hello! How are you?", from: 'User1' }, { text: "I'm good, thanks! How about you?", from: 'Me' }],
-			};
-			document.getElementById('input-container').style.display = 'block';
-			displayMessages(currentUser);
-
-			$(document).on('submit', '#sendaMessage', function(e){
-				e.preventDefault();
-				const input = document.getElementById('messageInput');
-				const text = input.value.trim();
-				if (text) {
-					if (!messages[currentUser]) messages[currentUser] = [];
-					messages[currentUser].push({ text, from: 'Me' });
-					displayMessages(currentUser);
-					input.value = '';
-				}
-			});
-		});
-	});
-
-	function displayMessages(userName) {
-		const messagesContainer = document.getElementById('messages');
-		messagesContainer.innerHTML = '';
-		(messages[userName] || []).forEach(message => {
-			const messageBox = document.createElement('div');
-			messageBox.className = 'message-box ' + (message.from === 'Me' ? 'message-right' : 'message-left');
-			messageBox.textContent = message.text;
-			messagesContainer.appendChild(messageBox);
-		});
-		messagesContainer.scrollTop = messagesContainer.scrollHeight;
-	}
+	
 </script>
 </body>
 </html>
