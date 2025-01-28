@@ -2,15 +2,18 @@
 if(!isset($_SESSION['customer'])){
 	header("Location: login.php?page=shop.php");
 }
+// BILLING ADDRESS
 $B_fullName = "";
 $B_phone = "";
 $B_address = "";
 $B_city = "";
+// SHIPPING ADDRESS
 $S_fullName = "";
 $S_phone = "";
 $S_address = "";
 $S_city = "";
-$sql1 = "SELECT * FROM tbl_shipping_address WHERE user_id=:u_id";
+// RETRIEVE BILLING ADDRESS
+$sql1 = "SELECT * FROM tbl_billing_address WHERE user_id=:u_id";
 $p1 = [
 	':u_id' =>  $_SESSION['customer']['id'],
 ];
@@ -23,49 +26,19 @@ if($res1 != false){
 		$B_city = $row1['city'];
 	}
 }
-if (isset($_POST['selected_items']) && !empty($_POST['selected_items'])) {
-    $selected_items = $_POST['selected_items'];
-    $count = count($selected_items);
-    $totalAmount = 0;
-    ?>
-
-    <div class="container mt-4">
-        <div class="row">
-		<?php
-if (isset($_POST['selected_items']) && !empty($_POST['selected_items'])) {
-    $selected_items = $_POST['selected_items'];
-    $count = count($selected_items);
-    $totalAmount = 0;
-    ?>
-
-    <div class="container mt-4">
-        <div class="row">
-            <?php
-            foreach ($selected_items as $key => $productId) {
-                $index = array_search($productId, $_SESSION['cart_p_id']);
-                $quantity = $_SESSION['cart_p_qty'][$index];
-                $price = $_SESSION['cart_p_current_price'][$index];
-                $totalAmount += $price * $quantity;
-            }
-            ?>
-
-            
-        </div>
-    </div>
-
-    <?php
-} else {
-    echo "<script>alert('No items selected!'); window.location.href='cart.php';</script>";
-}
-?>
-
-           
-        </div>
-    </div>
-
-    <?php
-} else {
-    echo "<script>alert('No items selected!'); window.location.href='cart.php';</script>";
+// RETRIEVE SHIPPING ADDRESS
+$sql1 = "SELECT * FROM tbl_shipping_address WHERE user_id=:u_id";
+$p1 = [
+	':u_id' =>  $_SESSION['customer']['id'],
+];
+$res1 = $c->fetchData($pdo, $sql1, $p1);
+if($res1 != false){
+	foreach($res1 as $row1){
+		$S_fullName = $row1['full_name'];
+		$S_phone = $row1['phone'];
+		$S_address = $row1['address'];
+		$S_city = $row1['city'];
+	}
 }
 
 if(isset($_SESSION['cart_p_id'])){
@@ -166,55 +139,30 @@ if(isset($_SESSION['cart_p_id'])){
 						</div>
 					</div>
 					<div class="col-md-6">
+						<h3 class="mt-3 billing-heading">Shipping Details</h3>
+						<hr/>
 						<div class="row align-items-end">
 							<div class="col-md-12">
-							<div class="card bg-white" style="height: 70vh; overflow-y: 10px;">
-								<div class="card-body">
-									<h5 class="card-title">Order Summary</h5>
-									<?php
-									require_once 'system/inc/config.php';
-
-									foreach ($selected_items as $key => $productId) {
-										$stmt = $pdo->prepare("
-											SELECT 
-												p.p_name, 
-												s.business_name 
-											FROM 
-												tbl_product p
-											LEFT JOIN 
-												tbl_seller s 
-											ON 
-												p.u_id = s.user_id
-											WHERE 
-												p.p_id = :productId
-										");
-										$stmt->execute(['productId' => $productId]);
-										$productData = $stmt->fetch(PDO::FETCH_ASSOC);
-									
-										$index = array_search($productId, $_SESSION['cart_p_id']);
-										$quantity = $_SESSION['cart_p_qty'][$index];
-										$price = $_SESSION['cart_p_current_price'][$index];
-										$productName = $productData ? $productData['p_name'] : 'Unknown Product';
-										$businessName = $productData ? $productData['business_name'] : 'Unknown Business';
-									
-										?>
-									
-									<?php
-										$price = (float)$price;
-										$quantity = (int)$quantity;
-										$totalPrice = $price * $quantity;
-										?>
-										<p class="card-text">Product Name: <?php echo htmlspecialchars($productName); ?></p>
-										<p class="card-text">Business Name: <?php echo htmlspecialchars($businessName); ?></p>
-										<p class="card-text">Quantity: <?php echo $quantity; ?></p>
-										<p class="card-text">Price: ₱<?php echo number_format($totalPrice, 2); ?></p>											
-											<hr>
-										<?php
-									}
-									?>
-
+								<div class="form-group">
+									<label for="">Full Name</label>
+									<input type="text" value="<?= $S_fullName; ?>" style="background-color: #E8E8E8 !important;" readonly class="form-control">
 								</div>
-							</div><br><br>
+								<div class="form-group">
+									<label for="">Phone No. </label>
+									<input type="text" value="<?= $S_phone; ?>" style="background-color: #E8E8E8 !important;" readonly class="form-control">
+								</div>
+								<div class="form-group">
+									<label for="">Country</label>
+									<input type="text" value="Philippines" style="background-color: #E8E8E8 !important;" readonly class="form-control">
+								</div>
+								<div class="form-group">
+									<label for="">Address</label>
+									<textarea style="background-color: #E8E8E8 !important;" readonly class="form-control"><?= $S_address; ?></textarea>
+								</div>
+								<div class="form-group">
+									<label for="">City</label>
+									<input type="text" value="<?= $S_city; ?>" style="background-color: #E8E8E8 !important;" readonly class="form-control">
+								</div>
 							</div>
 						</div>
 					</div>
@@ -290,7 +238,7 @@ if(isset($_SESSION['cart_p_id'])){
 							alert(data.error);
 						}else{
 							alert(data.success);
-							window.location.href="checkout-process.php";
+							window.location.href="cart.php";
 						}
 					}
 				});

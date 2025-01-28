@@ -318,37 +318,33 @@ button[type="submit"]:hover {
                                                                     exit;
                                                                 }
 
-                                                                $riderEmail = $order['rider_email'];
+                                                             
 
-                                                                $query = "SELECT * FROM messages WHERE receiver_email = :receiver_email ORDER BY created_at ASC";
+                                                                $query = "SELECT * FROM messages WHERE sender_email = :sender_email OR receiver_email = :sender_email ORDER BY created_at ASC";
                                                                 $stmt = $pdo->prepare($query);
-                                                                $stmt->bindParam(':receiver_email', $riderEmail);
+                                                                $stmt->bindParam(':sender_email', $senderEmail);
                                                                 $stmt->execute();
-
-          
-                                                                $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                                            
+  
                                                                 if ($stmt->rowCount() > 0) {
-                                                                   
+                                                                    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                                         
                                                                     foreach ($messages as $message) {
-                                                  
                                                                         $messageDiv = '<div class="message-container">';
                                                                         
-                                                                     
+                                                                       
                                                                         if ($message['sender_email'] === $senderEmail) {
-                                                                            $messageDiv .= '<div class="message-left">' . htmlspecialchars($message['message']) . '</div>';
-                                                                        }
-                                                                        
-                                                                      
-                                                                        if ($message['receiver_email'] === $senderEmail) {
                                                                             $messageDiv .= '<div class="message-right">' . htmlspecialchars($message['message']) . '</div>';
                                                                         }
-
+                                                                        
                                                                        
+                                                                        if ($message['receiver_email'] === $senderEmail) {
+                                                                            $messageDiv .= '<div class="message-left">' . htmlspecialchars($message['message']) . '</div>';
+                                                                        }
+  
+                                                                 
                                                                         $messageDiv .= '</div>';
                                                                         
-                                                                     
+                                                               
                                                                         echo $messageDiv;
                                                                     }
                                                                 } else {
