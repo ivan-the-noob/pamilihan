@@ -12,13 +12,13 @@ date_default_timezone_set('Asia/Manila');
 $dbhost = '127.0.0.1';
 
 // Database Name
-$dbname = 'pamilihan_ecomerce';
+$dbname = 'u373116035_pamilihan';
 
 // Database Username
-$dbuser = 'root';
+$dbuser = 'u373116035_pamilihan';
 
 // Database Password
-$dbpass = '';
+$dbpass = '#Bakitako23';
 
 $php = '&#8369;';
 
