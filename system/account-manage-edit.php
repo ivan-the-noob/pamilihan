@@ -16,7 +16,7 @@ if(isset($_POST['form1'])) {
             $error_message .= 'You must have to upload jpg, jpeg, gif or png file<br>';
         }
     }
-
+ 
 	if($valid == 1) {
 
 		if($path == '') {

@@ -14,7 +14,7 @@ if(isset($_POST['form1'])) {
     if(empty($_POST['subject_text'])) {
         $valid = 0;
         $error_message .= 'Subject can not be empty\n';
-    }
+    } 
     if(empty($_POST['message_text'])) {
         $valid = 0;
         $error_message .= 'Subject can not be empty\n';

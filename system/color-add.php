@@ -18,7 +18,7 @@ if(isset($_POST['form1'])) {
         	$error_message .= "Color Name already exists<br>";
     	}
     }
-
+ 
     if($valid == 1) {
 
 		// Saving data into the main table tbl_color

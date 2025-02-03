@@ -16,7 +16,7 @@ if(isset($_POST['form1'])) {
 		foreach($result as $row) {
 			$current_country_name = $row['country_name'];
 		}
-
+ 
 		$statement = $pdo->prepare("SELECT * FROM tbl_country WHERE country_name=? and country_name!=?");
     	$statement->execute(array($_POST['country_name'],$current_country_name));
     	$total = $statement->rowCount();							

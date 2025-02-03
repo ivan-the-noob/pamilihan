@@ -13,4 +13,4 @@ if($_POST['id'])
         <option value="<?php echo $row['ecat_id']; ?>"><?php echo $row['ecat_name']; ?></option>
         <?php
 	}
-}
+} 

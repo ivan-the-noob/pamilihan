@@ -16,7 +16,7 @@ if(!isset($_REQUEST['id'])) {
 	}
 }
 ?>
-
+ 
 <?php
 
 	// Delete from tbl_color

@@ -13,7 +13,7 @@ if(isset($_POST['form1'])) {
         $valid = 0;
         $error_message .= "You must have to select a mid level category<br>";
     }
-
+ 
     if(empty($_POST['ecat_name'])) {
         $valid = 0;
         $error_message .= "End level category name can not be empty<br>";

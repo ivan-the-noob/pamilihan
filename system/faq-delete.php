@@ -15,7 +15,7 @@ if(!isset($_REQUEST['id'])) {
 	}
 }
 ?>
-
+ 
 <?php
 	// Delete from tbl_faq
 	$statement = $pdo->prepare("DELETE FROM tbl_faq WHERE faq_id=?");

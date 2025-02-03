@@ -15,7 +15,7 @@ if(!isset($_REQUEST['id'])) {
 	}
 }
 ?>
-
+ 
 <?php
 
 	// Getting photo ID to unlink from folder

@@ -253,7 +253,7 @@ catch( PDOException $exception ) {
             </form>
 
           <hr>
-<?php
+          <?php
 $from_date = $_GET['from_date'] ?? date('Y-m-01');
 $to_date = $_GET['to_date'] ?? date('Y-m-d');
 
@@ -263,54 +263,40 @@ $chart_sales = [];
 $chart_transactions = [];
 $total_sales = 0;
 $date = "";
-if($_SESSION['user']['role'] == "Admin"){
+
+if ($_SESSION['user']['role'] == "Admin") {
     $sql = "SELECT DISTINCT order_id FROM tbl_purchase_item";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
 }
-if($_SESSION['user']['role'] == "Seller"){
+if ($_SESSION['user']['role'] == "Seller") {
     $sql = "SELECT DISTINCT order_id FROM tbl_purchase_item WHERE seller_id=:seller_id";
     $stmt = $pdo->prepare($sql);
-    $stmt->execute([
-        ':seller_id'    =>  $_SESSION['user']['id']
-    ]);
+    $stmt->execute([':seller_id' => $_SESSION['user']['id']]);
 }
 $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-if($stmt->rowCount() > 0){
+if ($stmt->rowCount() > 0) {
     $query = "SELECT DISTINCT p.*, 
-                     DATE_FORMAT(FROM_UNIXTIME(p.date_and_time), '%Y-%m') AS month_year, 
+                     DATE_FORMAT(FROM_UNIXTIME(p.date_and_time), '%Y-%m-%d') AS date_label, 
                      SUM(p.total_amount) AS totalAmount, 
-                     COUNT(p.order_id) AS countOrder, 
-                     o.status as shipped_status, 
-                     o.date_and_time as shipped_date, 
-                     u.full_name, u.email 
+                     COUNT(p.order_id) AS countOrder 
               FROM tbl_purchase_payment p 
               JOIN tbl_purchase_order o ON p.order_id=o.order_id 
-              JOIN tbl_user u ON o.customer_id=u.id 
               WHERE p.date_and_time >= :from_date AND p.date_and_time <= :to_date 
-              GROUP BY month_year ORDER BY p.date_and_time DESC";
+              GROUP BY date_label ORDER BY p.date_and_time DESC";
     $statement = $pdo->prepare($query);
     $statement->execute([
         ':from_date' => strtotime("$from_date 00:00:00"),
-        ':to_date' =>  strtotime("$to_date 23:59:59")
+        ':to_date' => strtotime("$to_date 23:59:59")
     ]);
     $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-
-    $i = 1;
-    if($statement->rowCount() > 0){
-        foreach($res as $val){
-            foreach ($result as $row) {
-                if($row['order_id'] == $val['order_id']){
-                    $date = $row['month_year'];
-                    $chart_labels[] = $date;
-                    $chart_sales[] = $row['totalAmount'];
-                    $total_sales += $row['totalAmount'];
-                    $chart_transactions[] = $row['countOrder'];
-                    $i++;
-                }
-            }
-        }
+    
+    foreach ($result as $row) {
+        $chart_labels[] = $row['date_label'];
+        $chart_sales[] = $row['totalAmount'];
+        $chart_transactions[] = $row['countOrder'];
+        $total_sales += $row['totalAmount'];
     }
 }
 ?>
@@ -318,6 +304,13 @@ if($stmt->rowCount() > 0){
 <!-- Summary Metrics -->
 <h4>Summary Metrics</h4>
 <p><strong>Total Sales:</strong> <?php echo number_format($total_sales, 2); ?></p>
+<div style="display: flex; justify-content: end;">
+<div>
+    <button class="btn btn-primary" onclick="updateChart('weekly')">Weekly</button>
+    <button class="btn btn-primary" onclick="updateChart('monthly')">Monthly</button>
+    <button class="btn btn-primary" onclick="updateChart('quarterly')">Quarterly</button>
+    <button class="btn btn-primary" onclick="updateChart('yearly')">Yearly</button>
+</div></div>
 <canvas id="salesChart" width="400" height="200"></canvas>
 <hr>
 
@@ -392,23 +385,36 @@ if($stmt->rowCount() > 0){
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+let chart;
+const ctx = document.getElementById('salesChart').getContext('2d');
+
+function updateChart(period) {
+    fetch(`get_sales_data.php?period=${period}`)
+        .then(response => response.json())
+        .then(data => {
+            chart.data.labels = data.labels;
+            chart.data.datasets[0].data = data.sales;
+            chart.data.datasets[1].data = data.transactions;
+            chart.update();
+        });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
-    const ctx = document.getElementById('salesChart').getContext('2d');
-    const salesChart = new Chart(ctx, {
+    chart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: <?php echo json_encode($chart_labels); ?>,
             datasets: [
                 {
                     label: 'Total Sales',
-                    data: <?php echo json_encode($chart_sales); ?>, 
+                    data: <?php echo json_encode($chart_sales); ?>,
                     backgroundColor: 'rgba(75, 192, 192, 0.6)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 1
                 },
                 {
                     label: 'Total Transactions',
-                    data: <?php echo json_encode($chart_transactions); ?>, 
+                    data: <?php echo json_encode($chart_transactions); ?>,
                     backgroundColor: 'rgba(153, 102, 255, 0.6)',
                     borderColor: 'rgba(153, 102, 255, 1)',
                     borderWidth: 1
@@ -418,12 +424,8 @@ document.addEventListener("DOMContentLoaded", function () {
         options: {
             responsive: true,
             scales: {
-                x: {
-                    beginAtZero: true
-                },
-                y: {
-                    beginAtZero: true
-                }
+                x: { beginAtZero: true },
+                y: { beginAtZero: true }
             }
         }
     });
@@ -448,6 +450,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
 <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>

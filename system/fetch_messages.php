@@ -20,3 +20,4 @@ if (isset($_GET['sender_email']) && isset($_GET['receiver_email'])) {
     echo json_encode(['error' => 'Invalid request parameters']);
 }
 ?>
+ 
