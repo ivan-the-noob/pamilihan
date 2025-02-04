@@ -1,3 +1,12 @@
+<?php
+session_start();  
+
+if (!isset($_SESSION['user']['id']) || $_SESSION['user']['verification'] != 3) {
+    header('Location: index.php');
+    exit();
+}
+?>
+
 <?php require_once('header.php'); ?>
 
 <section class="content-header">

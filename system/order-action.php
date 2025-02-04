@@ -27,6 +27,7 @@ if(isset($_POST['riderAccept'])){
     $orderId = $_POST['order_id'];
     $status = $_POST['status'];
     $urId = $_POST['urId'];
+    $estimatedTime = isset($_POST['estimated_time']) ? $_POST['estimated_time'] : null; // Get the estimated time value
     $rider = false;
     $active = false;
     $remarks = "";
@@ -95,11 +96,13 @@ if(isset($_POST['riderAccept'])){
                     echo "success";
                 }else if($status == "Buying Items"){
                     $remarks = "On the way for delivery";
-                    $sql = "UPDATE tbl_purchase_order SET rider_id=:ridId, remarks=:remarks, status='Delivering Items' WHERE order_id=:ordId";
+                    // Save the estimated time in the database when status is "Buying Items"
+                    $sql = "UPDATE tbl_purchase_order SET rider_id=:ridId, remarks=:remarks, status='Delivering Items', estimated_time=:estimatedTime WHERE order_id=:ordId";
                     $p3 = [
-                        ":ordId"    =>  $orderId,
-                        ":remarks"  =>  $remarks,
-                        ":ridId"    =>  $urId
+                        ":ordId"        =>  $orderId,
+                        ":remarks"      =>  $remarks,
+                        ":ridId"        =>  $urId,
+                        ":estimatedTime"=>  $estimatedTime // Add estimated time to the query
                     ];
                     $res = $c->updateData($pdo, $sql, $p3);
                 
@@ -125,6 +128,7 @@ if(isset($_POST['riderAccept'])){
     }
     unset($_POST['riderAccept']);
 }
+
 
 if(isset($_POST['completePayment'])){
     $orderId = $_POST['order_id'];

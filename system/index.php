@@ -1,6 +1,8 @@
 
 <?php require_once('header.php'); 
+
 ?>
+
 
  
 
@@ -14,6 +16,7 @@ $myId = "";
 if(isset($_SESSION['user'])){
   $myId = $_SESSION['user']['id'];
   $myRole = $_SESSION['user']['role'];
+  $verification = $_SESSION['user']['verification'];
 }
 $statement = $pdo->prepare("SELECT * FROM tbl_top_category");
 $statement->execute();
@@ -93,8 +96,87 @@ if($myRole == "Admin"){
 }
 $total_order_complete_shipping_pending = $statement->rowCount();
 ?>
+
 <?php
-if($myRole == "Rider"){
+$myRole = "";
+$myId = "";
+$verification = 0; 
+
+if (isset($_SESSION['user'])) {
+  $myId = $_SESSION['user']['id'];
+  $myRole = $_SESSION['user']['role'];
+  $verification = $_SESSION['user']['verification'];
+}
+
+if ($myRole == "Rider" && $verification == 1) {
+?>
+<section class="content">
+  <div class="card" style="background-color: #fff; padding: 20px; width: 50%; height: 30vh; display: flex; flex-direction: column; justify-content: center; align-items: center; border-radius: 20px;">
+    <form method="POST" action="save_signature.php" enctype="multipart/form-data">
+      <h3>Verication</h3>
+      <label for="e-signature">Upload E-Signature:</label>
+      <input type="file" class="form-control" name="e-signature" id="e-signature" accept="image/*" required>
+      <input type="hidden" name="id" value="<?php echo $myId; ?>">
+          <input type="checkbox" id="showModalCheckbox"style="margin-top: 5px;" required> Show Contract Modal
+      <div class="div">
+          <button type="submit" name="save_signature" style="margin-top: 5px;">Verify</button>
+    </div>
+  </form>
+  </div>
+</section>
+
+<div class="modal fade" id="contractModal" tabindex="-1" role="dialog" aria-labelledby="contractModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="contractModalLabel">Draft Contract for Rider</h4>
+            </div>
+            <div class="modal-body">
+                <p>This is a draft contract for a rider delivering items from the seller to the buyer. Please read through and confirm your understanding of the terms.</p>
+                <div>
+                    <h5>Terms & Conditions:</h5>
+                    <ul>
+                        <li>As a rider, you are responsible for the timely and safe delivery of the items from the seller to the buyer.</li>
+                        <li>The seller is responsible for packing the items properly, ensuring they are ready for delivery.</li>
+                        <li>The buyer must be available to receive the items at the specified address at the agreed time.</li>
+                        <li>In case of any damage or dispute, the rider must notify the platform support immediately.</li>
+                        <li>The payment for the delivery will be processed according to the agreed fee upon successful delivery.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="acceptContractBtn">I Accept</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('#showModalCheckbox').change(function() {
+            if ($(this).prop('checked')) {
+                $('#contractModal').modal('show');
+            }
+        });
+
+        $('#acceptContractBtn').click(function() {
+            alert('You have accepted the contract!');
+            $('#contractModal').modal('hide'); 
+        });
+    });
+</script>
+<?php
+} elseif ($myRole == "Rider" && $verification == 2) {
+?>
+<section class="content">
+  <h3>Please Wait for admin to confirm your request.</h3>
+</section>
+<?php
+} elseif ($myRole == "Rider" && $verification == 3) {
 ?>
 <section class="content">
 
@@ -226,21 +308,56 @@ if($myRole == "Rider"){
                                       }
                                   ?></td>
                                   <td>
-                                    <?php if($row['status'] == "Pending"){ ?>
-                                        Pending
-                                    <?php }else if($row['status'] == "Accepted"){ ?>
-                                        <button class="btn-block btn btn-sm btn-primary riderAccept" data-order="<?= $row['order_id']; ?>" data-id="<?= $_SESSION['user']['id'];?>" data-status="<?= $row['status'];?>">Accept?</button>
-                                    <?php  }else if($row['status'] == "Rider"){ ?>
+                                  <?php if($row['status'] == "Pending"){ ?>
+                                      Pending
+                                  <?php }else if($row['status'] == "Accepted"){ ?>
+                                      <button class="btn-block btn btn-sm btn-primary riderAccept" data-order="<?= $row['order_id']; ?>" data-id="<?= $_SESSION['user']['id'];?>" data-status="<?= $row['status'];?>">Accept?</button>
+                                  <?php  }else if($row['status'] == "Rider"){ ?>
                                       <button class="btn-block btn btn-sm btn-warning riderAccept" data-order="<?= $row['order_id']; ?>" data-id="<?= $_SESSION['user']['id'];?>" data-status="<?= $row['status'];?>">Buying Items?</button>
-                                    <?php  }else if($row['status'] == "Buying Items"){ ?>
-                                        <button class="btn-block btn btn-sm btn-warning riderAccept" data-order="<?= $row['order_id']; ?>" data-id="<?= $_SESSION['user']['id'];?>" data-status="<?= $row['status'];?>">Deliver?</button>
-                                    <?php }else if($row['status'] == "Delivering Items"){ ?>
-                                        <button class="btn-block btn btn-sm btn-success riderAccept" data-order="<?= $row['order_id']; ?>" data-id="<?= $_SESSION['user']['id'];?>" data-status="<?= $row['status'];?>">Done?</button>
-                                    <?php }else if($row['status'] == "Cancelled"){ ?>
-                                        <span class="text text-danger"><?= $row['status']; ?></span>
-                                    <?php }else{ ?>
-                                        <span class="text text-success"><?= $row['status']; ?></span>
-                                    <?php } ?>
+                                  <?php  }else if($row['status'] == "Buying Items"){ ?>
+                                      <button class="btn-block btn btn-sm btn-warning riderAccept" data-order="<?= $row['order_id']; ?>" data-id="<?= $_SESSION['user']['id'];?>" data-status="<?= $row['status'];?>">Deliver?</button>
+                                  <?php }else if($row['status'] == "Delivering Items"){ ?>
+                                      <button class="btn-block btn btn-sm btn-success riderAccept" data-order="<?= $row['order_id']; ?>" data-id="<?= $_SESSION['user']['id'];?>" data-status="<?= $row['status'];?>">Done?</button>
+                                  <?php }else if($row['status'] == "Cancelled"){ ?>
+                                      <span class="text text-danger"><?= $row['status']; ?></span>
+                                  <?php }else{ ?>
+                                      <span class="text text-success"><?= $row['status']; ?></span>
+                                  <?php } ?>
+
+
+                                    <!-- Modal for Order Status Confirmation -->
+                                    <div class="modal fade" id="orderStatusModal" tabindex="-1" role="dialog" aria-labelledby="orderStatusModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="orderStatusModalLabel">Order Status Update</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p id="modalMessage"></p> 
+                                                    <div id="estimatedTimeSection" style="display: none;">
+                                                        <label for="estimatedTime">Estimated Time:</label>
+                                                        <select id="estimatedTime" class="form-control">
+                                                            <option value="10">10 minutes</option>
+                                                            <option value="20">20 minutes</option>
+                                                            <option value="30">30 minutes</option>
+                                                            <option value="40">40 minutes</option>
+                                                            <option value="50">50 minutes</option>
+                                                            <option value="60">60 minutes</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                    <button type="button" class="btn btn-primary" id="confirmStatusChange">Confirm</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                   </td>
                                   <td width="200px"><?php if($row['rider_id'] == ""){ echo '-';}else{ ?>
                                       <?php
@@ -1136,10 +1253,18 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       });
     });
+    $(document).ready(function(){
     $(document).on('click', '.riderAccept', function(e){
         e.preventDefault();
         var status = $(this).data('status');
         var message = "";
+        var orderId = $(this).data('order');
+        var urId = $(this).data('id');
+
+        // Reset the modal content before each open
+        $('#estimatedTimeSection').hide();
+        $('#estimatedTime').val(''); // Reset the select value
+
         if(status == "Accepted"){
             message = "You want to accept this order?";
         }
@@ -1148,33 +1273,50 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         if(status == "Buying Items"){
             message = "You delivering the items now?";
+            $('#estimatedTimeSection').show(); // Show the "estimated time" dropdown
         }
         if(status == "Delivering Items"){
             message = "Order is successfully delivered?";
         }
-        if(confirm(""+message+"")){
-            var orderId = $(this).data('order');
-            var urId = $(this).data('id');
-            var status = $(this).data('status');
+
+        // Set the message in the modal
+        $('#modalMessage').text(message);
+        
+        // Show the modal
+        $('#orderStatusModal').modal('show');
+
+        // Confirm the status change when "Confirm" button is clicked
+        $('#confirmStatusChange').off('click').on('click', function(){
+            var estimatedTime = $('#estimatedTime').val(); // Get selected estimated time
             $.ajax({
-            url:"order-action.php",
-            method:"POST",
-            data:{'order_id':orderId, 'status':status, 'urId':urId, 'riderAccept':true},
-            dataType:"HTML",
-            success:function(response){
-                if(response == "success"){
-                    alert("Order has been updated!");
-                    window.location.reload();
-                }else if(response == "error"){
-                    alert("Something is wrong, we'll refresh the page for you.");
-                    window.location.reload();
-                }else{
-                    alert(response);
+                url: "order-action.php",
+                method: "POST",
+                data: {
+                    'order_id': orderId,
+                    'status': status,
+                    'urId': urId,
+                    'estimated_time': estimatedTime, // Pass estimated time
+                    'riderAccept': true
+                },
+                dataType: "HTML",
+                success: function(response){
+                    if(response == "success"){
+                        alert("Order has been updated!");
+                        window.location.reload();
+                    }else if(response == "error"){
+                        alert("Something went wrong, refreshing...");
+                        window.location.reload();
+                    }else{
+                        alert(response);
+                    }
+                    $('#orderStatusModal').modal('hide'); 
                 }
-            }
             });
-        }
+        });
     });
+});
+
+
 
     $(document).on('click','.completePayment', function(e){
       e.preventDefault();

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 28, 2025 at 05:17 AM
+-- Generation Time: Feb 04, 2025 at 07:18 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.1.25
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -69,7 +69,10 @@ INSERT INTO `tbl_billing_address` (`id`, `user_id`, `full_name`, `phone`, `count
 (1, 4, 'Example Cust', '09345789782', 'Philippines', 'asdasda', 'Taguig'),
 (2, 5, 'Example Customer', '0987654321', 'Philippines', 'asdasdas', 'Taguig'),
 (7, 11, '', '', 'Philippines', '', ''),
-(8, 12, '', '', 'Philippines', '', '');
+(8, 12, '', '', 'Philippines', '', ''),
+(9, 16, '', '', 'Philippines', '', ''),
+(10, 18, '', '', 'Philippines', '', ''),
+(11, 19, '', '', 'Philippines', '', '');
 
 -- --------------------------------------------------------
 
@@ -429,7 +432,10 @@ CREATE TABLE `tbl_customer` (
 
 INSERT INTO `tbl_customer` (`cust_id`, `user_id`, `cust_name`, `cust_cname`, `cust_email`, `cust_phone`, `cust_country`, `cust_address`, `cust_city`, `cust_state`, `cust_zip`, `cust_b_name`, `cust_b_cname`, `cust_b_phone`, `cust_b_country`, `cust_b_address`, `cust_b_city`, `cust_b_state`, `cust_b_zip`, `cust_s_name`, `cust_s_cname`, `cust_s_phone`, `cust_s_country`, `cust_s_address`, `cust_s_city`, `cust_s_state`, `cust_s_zip`, `cust_password`, `cust_token`, `cust_datetime`, `cust_timestamp`, `cust_status`, `map_long`, `map_lat`, `profile_picture`) VALUES
 (2, 5, 'Example Customer', 'none', 'example@gmail.com', '09789434331', 'Philippines', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '9037849827342lkjsdf898342o20as', '', '', 1, NULL, NULL, NULL),
-(7, 11, 'Ablanida Ivan ', 'none', 'ejthecoder@gmail.com', '09957939703', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 'df84add7094ddbdaf29803f4eb4e1db8', '', '1737915424', 0, NULL, NULL, NULL);
+(7, 11, 'Ablanida Ivan ', 'none', 'ejthecoder@gmail.com', '09957939703', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', 'df84add7094ddbdaf29803f4eb4e1db8', '', '1737915424', 0, NULL, NULL, NULL),
+(9, 16, 'Christian Charles  Mabacas', 'none', 'christiancharles1107@gmail.com', '09177504261', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '44e942b6958888da1d2ce96488bb9c61', '', '1738046862', 0, NULL, NULL, NULL),
+(10, 18, 'recipe  secret', 'none', 'nobitzkii@gmail.com', '0917345632', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '8a9a92eb4206ee1a232aa7b2765cb17f', '', '1738049875', 0, NULL, NULL, NULL),
+(11, 19, 'Janessa Marielle Cruz', 'none', 'cruzjanessa17@gmail.com', '09361559549', '', '', '', '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', '0aee2b86114a5ed9c16f8ee41f7d2315', '', '1738050285', 0, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -537,9 +543,6 @@ CREATE TABLE `tbl_inventory` (
 --
 
 INSERT INTO `tbl_inventory` (`id`, `p_id`, `b_id`, `stock_in`, `stock_out`, `exp_date`, `stock_status`) VALUES
-(28, 14, 'B1001', 100, 0, '1736483247', 'Available'),
-(29, 14, 'B1001', 50, 0, '1736483348', 'Available'),
-(30, 14, 'B1002', 100, 0, '1736483558', 'Available'),
 (31, 28, 'B1001', 50, 0, '', 'Available'),
 (32, 30, 'B1001', 50, 0, '', 'Available'),
 (34, 28, 'B1002', 50, 0, '', 'Available'),
@@ -547,10 +550,12 @@ INSERT INTO `tbl_inventory` (`id`, `p_id`, `b_id`, `stock_in`, `stock_out`, `exp
 (36, 29, 'B1002', 50, 0, '', 'Available'),
 (37, 1, 'B1001', 100, 0, '', 'Available'),
 (38, 2, 'B1001', 100, 0, '', 'Available'),
-(39, 4, 'B1001', 100, 0, '', 'Available'),
-(40, 3, 'B1001', 100, 0, '', 'Available'),
-(41, 13, 'B1001', 100, 0, '', 'Available'),
-(42, 12, 'B1001', 100, 0, '', 'Available');
+(42, 12, 'B1001', 100, 0, '', 'Available'),
+(43, 14, 'B1002', 20, 0, '', 'Available'),
+(44, 15, 'B1003', 20, 0, '', 'Available'),
+(45, 16, 'B1001', 20, 0, '', 'Available'),
+(46, 17, 'B1002', 25, 0, '', 'Available'),
+(47, 18, 'B1004', 20, 0, '', 'Available');
 
 -- --------------------------------------------------------
 
@@ -796,7 +801,15 @@ INSERT INTO `tbl_mid_category` (`mcat_id`, `seller_id`, `mcat_name`, `tcat_id`) 
 (8, 3, 'Vegetable', 4),
 (9, 3, 'Fruits', 4),
 (10, 3, 'Pork', 5),
-(11, 3, 'Beef', 5);
+(11, 3, 'Beef', 5),
+(12, 14, 'Chicken', 7),
+(13, 14, 'Sauces', 9),
+(14, 14, 'Vegetables', 8),
+(15, 15, 'Baboy', 11),
+(16, 15, 'Powder Mix', 12),
+(17, 14, 'vegetable', 8),
+(18, 14, 'vegetable', 8),
+(19, 3, 'SUB TEST', 13);
 
 -- --------------------------------------------------------
 
@@ -990,7 +1003,11 @@ CREATE TABLE `tbl_product` (
 INSERT INTO `tbl_product` (`p_id`, `u_id`, `p_name`, `p_retail`, `p_wholesale`, `p_w_confirm`, `nearly_expiration`, `critical_level`, `stocks_reorder`, `p_old_price`, `p_current_price`, `p_qty`, `p_featured_photo`, `p_description`, `p_short_description`, `p_feature`, `p_condition`, `p_return_policy`, `p_total_view`, `p_is_featured`, `p_is_active`, `ecat_id`) VALUES
 (3, 3, 'Pork Chop', '150', '125', 0, 0, 20, 12, '', '', 0, 'product-featured-3.jpg', '', '<p>1kg</p>', '', '', '', 37, 1, 1, 0),
 (4, 3, 'Guava', '150', '125', 0, 0, 20, 12, '', '', 0, 'product-featured-4.jpg', '', '<p>1kg</p>', '', '', '', 154, 1, 1, 0),
-(13, 13, 'Fresh Beef Brisket', '249', '', 0, 0, 20, 12, '', '', 0, 'product-featured-13.jpg', '', '', '', '', '', 228, 1, 1, 0);
+(13, 13, 'Fresh Beef Brisket', '249', '', 0, 0, 20, 12, '', '', 0, 'product-featured-13.jpg', '', '', '', '', '', 228, 1, 1, 0),
+(14, 14, 'Manok', '250', '', 0, 0, 5, 20, '', '', 0, 'product-featured-14.jpg', '', '<p>Fresh Meat</p>', '', '', '', 4, 1, 1, 0),
+(15, 14, 'Bawang', '120', '', 0, 0, 5, 20, '', '', 0, 'product-featured-15.jpg', '', '<p>Fresh Vegetables</p>', '', '', '', 5, 1, 1, 0),
+(16, 15, 'Baboy', '300', '', 0, 0, 5, 20, '', '', 0, 'product-featured-16.jpg', '', '<p>Fresh Pork</p>', '', '', '', 6, 1, 1, 0),
+(19, 3, 'TEST TEST TEST', '200', '', 0, 0, 312, 123, '', '', 0, 'product-featured-19.jpg', '', '<p>DASDSADAS</p>', '', '', '', 0, 1, 1, 0);
 
 -- --------------------------------------------------------
 
@@ -1026,7 +1043,13 @@ INSERT INTO `tbl_product_category` (`id`, `p_id`, `tcat_id`, `mcat_id`) VALUES
 (25, 10, 5, 10),
 (26, 11, 5, 10),
 (27, 12, 5, 10),
-(28, 13, 5, 10);
+(28, 13, 5, 10),
+(29, 14, 7, 12),
+(30, 15, 8, 14),
+(31, 16, 11, 15),
+(32, 17, 12, 16),
+(33, 18, 8, 14),
+(34, 19, 13, 19);
 
 -- --------------------------------------------------------
 
@@ -1052,6 +1075,13 @@ CREATE TABLE `tbl_product_photo` (
   `p_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+--
+-- Dumping data for table `tbl_product_photo`
+--
+
+INSERT INTO `tbl_product_photo` (`pp_id`, `photo`, `p_id`) VALUES
+(3, '3.jpg', 19);
+
 -- --------------------------------------------------------
 
 --
@@ -1072,7 +1102,27 @@ INSERT INTO `tbl_product_size` (`id`, `size_id`, `p_id`) VALUES
 (35, 1, 13),
 (36, 2, 13),
 (45, 2, 4),
-(46, 4, 4);
+(46, 4, 4),
+(48, 2, 14),
+(49, 1, 14),
+(50, 3, 14),
+(51, 4, 14),
+(52, 2, 15),
+(53, 1, 15),
+(54, 3, 15),
+(55, 4, 15),
+(56, 2, 16),
+(57, 1, 16),
+(58, 3, 16),
+(59, 4, 16),
+(60, 2, 18),
+(61, 1, 18),
+(62, 3, 18),
+(63, 4, 18),
+(64, 2, 19),
+(65, 1, 19),
+(66, 3, 19),
+(67, 4, 19);
 
 -- --------------------------------------------------------
 
@@ -1116,7 +1166,12 @@ INSERT INTO `tbl_purchase_item` (`id`, `type_item`, `order_id`, `seller_id`, `pr
 (17, 'product', 'OR6MMDLRC9J', '3', '4', '2', '150', '1', 'Pending'),
 (18, 'product', 'OR6MMDLRC9J', '13', '13', '2', '249', '1', 'Pending'),
 (19, 'product', 'OKUK0XK6EJK', '13', '13', '2', '249', '1', 'Pending'),
-(20, 'product', 'OKUK0XK6EJK', '3', '3', '0', '150', '1', 'Pending');
+(20, 'product', 'OKUK0XK6EJK', '3', '3', '0', '150', '1', 'Pending'),
+(21, 'product', 'OUC2XWFQZCM', '14', '14', '2', '250', '3', 'Pending'),
+(22, 'product', 'OUC2XWFQZCM', '15', '16', '2', '300', '2', 'Pending'),
+(23, 'product', 'O7M1TW1QJWP', '14', '14', '2', '250', '1', 'Pending'),
+(24, 'product', 'OI35I1FV6EG', '3', '15', '2', '120', '1', 'Pending'),
+(25, 'product', 'OBYKA9MH3R6', '3', '18', '2', '100', '1', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -1132,29 +1187,34 @@ CREATE TABLE `tbl_purchase_order` (
   `remarks` text NOT NULL,
   `date_and_time` varchar(125) NOT NULL,
   `status` varchar(20) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `estimated_time` int(3) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_purchase_order`
 --
 
-INSERT INTO `tbl_purchase_order` (`id`, `order_id`, `customer_id`, `rider_id`, `remarks`, `date_and_time`, `status`, `created_at`) VALUES
-(1, 'OW62PFLFR54', 5, '6', 'Completed', '1737103020', 'Completed', '2025-01-27 05:11:28'),
-(2, 'OMSGXZV3RMC', 5, '6', 'Completed', '1737269465', 'Completed', '2025-01-27 05:11:28'),
-(3, 'OR0OWH76MN9', 5, '', 'Pending', '1737915466', 'Pending', '2025-01-27 05:11:28'),
-(4, 'OVLPJCA8NJS', 5, '', 'Pending', '1737915536', 'Pending', '2025-01-27 05:11:28'),
-(5, 'OLI72VIQ89B', 5, '', 'Pending', '1737915933', 'Pending', '2025-01-27 05:11:28'),
-(6, 'OHSTK07P7FH', 5, '', 'Pending', '1737916006', 'Pending', '2025-01-27 05:11:28'),
-(7, 'OE56AKRQMBI', 5, '', 'Pending', '1737916066', 'Pending', '2025-01-27 05:11:28'),
-(8, 'OG5UG5SES0J', 5, '', 'Pending', '1737916170', 'Pending', '2025-01-27 05:11:28'),
-(9, 'OGYIOX6QLD1', 5, '6', 'Transferred to Rider', '1737917162', 'Rider', '2025-01-27 05:11:28'),
-(10, 'O6FYTPADBAN', 5, '', 'Pending', '1737954626', 'Pending', '2025-01-27 05:11:28'),
-(11, 'O7LFWKT3YPO', 5, '', 'Pending', '1737954765', 'Pending', '2025-01-27 05:12:45'),
-(12, 'OSO6C1NE9ZF', 5, '', 'Pending', '1737954978', 'Pending', '2025-01-27 05:16:18'),
-(13, 'O5IPAEV565H', 5, '', 'Accepted by Seller', '1737955013', 'Accepted', '2025-01-28 04:15:01'),
-(14, 'OR6MMDLRC9J', 5, '2', 'Transferred to Rider', '1737955975', 'Rider', '2025-01-27 14:43:23'),
-(15, 'OKUK0XK6EJK', 5, '6', 'Transferred to Rider', '1737960086', 'Rider', '2025-01-27 14:30:59');
+INSERT INTO `tbl_purchase_order` (`id`, `order_id`, `customer_id`, `rider_id`, `remarks`, `date_and_time`, `status`, `created_at`, `estimated_time`) VALUES
+(1, 'OW62PFLFR54', 5, '6', 'Completed', '1737103020', 'Completed', '2025-01-27 05:11:28', NULL),
+(2, 'OMSGXZV3RMC', 5, '6', 'Completed', '1737269465', 'Completed', '2025-01-27 05:11:28', NULL),
+(3, 'OR0OWH76MN9', 5, '', 'Pending', '1737915466', 'Pending', '2025-01-27 05:11:28', NULL),
+(4, 'OVLPJCA8NJS', 5, '', 'Pending', '1737915536', 'Pending', '2025-01-27 05:11:28', NULL),
+(5, 'OLI72VIQ89B', 5, '', 'Pending', '1737915933', 'Pending', '2025-01-27 05:11:28', NULL),
+(6, 'OHSTK07P7FH', 5, '', 'Pending', '1737916006', 'Pending', '2025-01-27 05:11:28', NULL),
+(7, 'OE56AKRQMBI', 5, '', 'Pending', '1737916066', 'Pending', '2025-01-27 05:11:28', NULL),
+(8, 'OG5UG5SES0J', 5, '', 'Pending', '1737916170', 'Pending', '2025-01-27 05:11:28', NULL),
+(9, 'OGYIOX6QLD1', 5, '6', 'Transferred to Rider', '1737917162', 'Rider', '2025-01-27 05:11:28', NULL),
+(10, 'O6FYTPADBAN', 5, '', 'Pending', '1737954626', 'Pending', '2025-01-27 05:11:28', NULL),
+(11, 'O7LFWKT3YPO', 5, '', 'Pending', '1737954765', 'Pending', '2025-01-27 05:12:45', NULL),
+(12, 'OSO6C1NE9ZF', 5, '2', 'On the way for delivery', '1737954978', 'Delivering Items', '2025-02-04 03:50:02', 20),
+(13, 'O5IPAEV565H', 5, '2', 'On the way for delivery', '1737955013', 'Delivering Items', '2025-02-04 02:24:23', NULL),
+(14, 'OR6MMDLRC9J', 5, '2', 'On the way for delivery', '1737955975', 'Delivering Items', '2025-02-04 03:18:48', NULL),
+(15, 'OKUK0XK6EJK', 5, '6', 'Transferred to Rider', '1737960086', 'Rider', '2025-01-27 14:30:59', NULL),
+(16, 'OUC2XWFQZCM', 5, '17', 'Completed', '1738050087', 'Completed', '2025-01-28 07:46:48', NULL),
+(17, 'O7M1TW1QJWP', 5, '2', 'Completed', '1738050936', 'Completed', '2025-02-03 18:38:25', NULL),
+(18, 'OI35I1FV6EG', 5, '', 'Pending', '1738052610', 'Pending', '2025-02-03 18:50:23', NULL),
+(19, 'OBYKA9MH3R6', 5, '', 'Pending', '1738607561', 'Pending', '2025-02-03 18:32:41', NULL);
 
 -- --------------------------------------------------------
 
@@ -1190,7 +1250,12 @@ INSERT INTO `tbl_purchase_payment` (`id`, `order_id`, `total_amount`, `transacti
 (12, 'OSO6C1NE9ZF', '300', 'T4881307362', '1737954978', 'Pending'),
 (13, 'O5IPAEV565H', '450', 'T0184878585', '1737955013', 'Pending'),
 (14, 'OR6MMDLRC9J', '549', 'T0666178254', '1737955975', 'Pending'),
-(15, 'OKUK0XK6EJK', '549', 'T1425034970', '1737960086', 'Pending');
+(15, 'OKUK0XK6EJK', '549', 'T1425034970', '1737960086', 'Pending'),
+(16, 'OUC2XWFQZCM', '1500', 'T4404148650', '1738050087', 'Completed'),
+(17, 'O7M1TW1QJWP', '400', 'T0991917324', '1738050936', 'Completed'),
+(18, 'OI35I1FV6EG', '270', 'T5288741038', '1738052610', 'Completed'),
+(19, 'OBYKA9MH3R6', '250', 'T1506102901', '1738607561', 'Completed'),
+(20, 'OBYKA9MH3R6', '300', 'T1506102901', '1738607561', 'Completed');
 
 -- --------------------------------------------------------
 
@@ -1245,7 +1310,8 @@ CREATE TABLE `tbl_recipe` (
 --
 
 INSERT INTO `tbl_recipe` (`r_id`, `u_id`, `r_name`, `r_description`, `r_total_view`, `r_featured_photo`, `r_is_active`) VALUES
-(1, 3, 'Sinigang', '<p>Step 1:</p><ul><li>For Step 1</li></ul><p>Step 2:</p><ul><li>For Step 2</li></ul>', '120', 'recipe-featured-1.jpg', 1);
+(2, 14, 'Adobong Baboy', '<p><strong>Adobong Manok&nbsp;</strong>is a classic Filipino dish of pork braised in soy sauce, vinegar, garlic, and spices, served with steamed rice.</p><p><div>Steps:</div><div>-&nbsp;&nbsp;&nbsp;&nbsp;In a bowl, marinate the meat with soy sauce, vinegar, garlic, and bay leaves for at least 30 minutes.</div><div>-&nbsp;&nbsp;&nbsp;&nbsp;Heat oil in a pan, then sauté onion and the marinated garlic.</div><div>-&nbsp;&nbsp;&nbsp;&nbsp;Add the meat (reserve the marinade) and cook until lightly browned.</div><div>-&nbsp;&nbsp;&nbsp;&nbsp;Pour in the marinade and water. Add peppercorns and sugar (if desired).</div><div>-&nbsp;&nbsp;&nbsp;&nbsp;Simmer for 30–40 minutes or until the meat is tender and the sauce has reduced.</div><div>-&nbsp;&nbsp;&nbsp;&nbsp;Adjust seasoning to taste. Serve with steamed rice.</div></p><p><br></p><p><br></p>', '4', 'recipe-featured-2.jpg', 1),
+(3, 15, 'Sinigang na Baboy', '<p><strong>Sinigang na Baboy</strong> is a Filipino soup made with pork, vegetables, and a tangy tamarind-based broth, perfect with steamed rice.</p><p>Steps:</p><p>Boil water in a pot and add pork, onion, and tomatoes. Simmer until pork is tender.</p><p>Add taro and radish. Cook for about 5 minutes.</p><p>Add sitaw and sinigang mix or tamarind juice. Stir well.</p><p>Once the vegetables are tender, add kangkong. Turn off the heat and let it cook in the residual heat.</p><p>Season with salt or fish sauce to taste. Serve hot.</p><div><br></div>', '4', 'recipe-featured-3.jpg', 1);
 
 -- --------------------------------------------------------
 
@@ -1268,9 +1334,10 @@ CREATE TABLE `tbl_recipe_product` (
 --
 
 INSERT INTO `tbl_recipe_product` (`id`, `u_id`, `r_id`, `p_id`, `s_id`, `quantity`, `price`) VALUES
-(1, 3, 1, 3, 2, 2, ''),
-(2, 3, 1, 4, 4, 1, ''),
-(3, 3, 1, 13, 2, 1, '');
+(4, 14, 2, 14, 2, 1, ''),
+(5, 14, 2, 15, 1, 1, ''),
+(6, 15, 3, 16, 2, 1, ''),
+(7, 15, 3, 17, 1, 1, '');
 
 -- --------------------------------------------------------
 
@@ -1301,7 +1368,8 @@ INSERT INTO `tbl_rider` (`id`, `user_id`, `license_number`, `vehicle_type`, `veh
 (15, '0', '453943', 'Motorcycle', 'VSJK1', '431432', '1736682335', 'Pending'),
 (16, '51', '454323', 'Motorcycle', 'TJW153', 'AWTS12', '1736682857', 'Verified'),
 (17, '2', '3059837', 'FJLSKD', 'asas', '45345', '1736733440', 'Verified'),
-(18, '6', '58394', 'asdasda', 'vhs10', '014583', '1736914221', 'Verified');
+(18, '6', '58394', 'asdasda', 'vhs10', '014583', '1736914221', 'Verified'),
+(19, '17', '12173687614', 'Motorcycle', 'Yamaha Sniper', 'DAR 1234', 'bbe7be73e281ff52d6935b147e8ce48a', 'Verified');
 
 -- --------------------------------------------------------
 
@@ -1328,7 +1396,9 @@ INSERT INTO `tbl_seller` (`id`, `user_id`, `business_title`, `business_name`, `b
 (4, 36, 'myseller3', 'My Seller 3', 'Open-Air Business Venue', '63345123', 'Verified'),
 (5, 37, 'asdasd', 'dsadasdasd', 'Open-Air Business Venue', '543534', 'Verified'),
 (6, 3, 'asdasdasd', 'dsadasdas', 'Open-Air Business Venue', '543543454', 'Verified'),
-(7, 13, 'dasdas', 'dasdas', 'Open-Air Business Venue', '312312312', 'Verified');
+(7, 13, 'dasdas', 'dasdas', 'Open-Air Business Venue', '312312312', 'Verified'),
+(8, 14, 'Aye', 'Aling Aye Store', 'Open-Air Business Venue', '123-123-123-00000', 'Verified'),
+(9, 15, 'Daryll', 'Daryll Store', 'Open-Air Business Venue', '123-123-123-11111', 'Verified');
 
 -- --------------------------------------------------------
 
@@ -1503,7 +1573,10 @@ INSERT INTO `tbl_shipping_address` (`id`, `user_id`, `full_name`, `phone`, `coun
 (1, 4, 'Example Cust', '09345789782', 'Philippines', 'asdasda', 'Taguig', '', ''),
 (2, 5, 'Example Customer', '0987654321', 'Philippines', 'Cavite-Laguna Expressway, Buenavista II, General Trias, Cavite, Calabarzon, 4107, Philippines', 'Brgy. Sta Rosa 1', '14.3186', '120.9061'),
 (7, 11, '', '', 'Philippines', '', '', '', ''),
-(8, 12, '', '', 'Philippines', '', '', '', '');
+(8, 12, '', '', 'Philippines', '', '', '', ''),
+(9, 16, '', '', 'Philippines', '', '', '', ''),
+(10, 18, '', '', 'Philippines', '', '', '', ''),
+(11, 19, '', '', 'Philippines', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -1683,7 +1756,14 @@ INSERT INTO `tbl_top_category` (`tcat_id`, `seller_id`, `tcat_name`, `show_on_me
 (2, 36, 'Fresh Meat & Seafood', 1),
 (3, 24, 'Fresh Meat & Seafood', 1),
 (4, 3, 'Fresh Produce', 1),
-(5, 3, 'Fresh Meat & Seafood', 0);
+(5, 3, 'Fresh Meat & Seafood', 0),
+(7, 14, 'Meat', 1),
+(8, 14, 'Fresh Produce', 1),
+(9, 14, 'Condiments', 1),
+(10, 15, 'Fresh Produce', 1),
+(11, 15, 'Meat', 1),
+(12, 15, 'Condiments', 1),
+(13, 3, 'TEST', 1);
 
 -- --------------------------------------------------------
 
@@ -1702,22 +1782,28 @@ CREATE TABLE `tbl_user` (
   `status` varchar(10) NOT NULL DEFAULT 'Active',
   `reset_token` varchar(255) DEFAULT NULL,
   `token_expiry` datetime DEFAULT NULL,
-  `reset_code` varchar(6) DEFAULT NULL
+  `reset_code` varchar(6) DEFAULT NULL,
+  `verification` int(2) DEFAULT 1,
+  `e-signature` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `tbl_user`
 --
 
-INSERT INTO `tbl_user` (`id`, `full_name`, `email`, `phone`, `password`, `photo`, `role`, `status`, `reset_token`, `token_expiry`, `reset_code`) VALUES
-(1, 'Erick Matte', 'admin@gmail.com', '099999878', '0192023a7bbd73250516f069df18b500', 'user-11.jpeg', 'Admin', 'Active', NULL, NULL, NULL),
-(2, 'Ivan', 'rider1@gmail.com', '098192732', '4297f44b13955235245b2497399d7a93', NULL, 'Rider', 'Active', NULL, NULL, NULL),
-(3, 'asdasdas', 'seller1@gmail.com', '0891723861', 'a8f5f167f44f4964e6c998dee827110c', 'user-user.png', 'Seller', 'Verified', NULL, NULL, NULL),
-(4, 'Adsad asdasdsa', 'customer1@gmail.com', '09218759834', '4297f44b13955235245b2497399d7a93', NULL, 'customer', 'Active', NULL, NULL, NULL),
-(5, 'Example Customer', 'example@gmail.com', '0978293452', '4297f44b13955235245b2497399d7a93', '', 'customer', 'Active', 'f5bc57741cd10657bb545124a304d7e5486bb70e0369ef6891b627641af3cc350d03f2ee21bd905e642118e83ce300e40c38', NULL, NULL),
-(6, 'New Rider', 'rider@gmail.com', '09428739472', '4297f44b13955235245b2497399d7a93', NULL, 'Rider', 'Active', NULL, NULL, NULL),
-(12, 'Ablanida Ivan ', 'ejthecoder@gmail.com', '09957939703', '9b05bca7461a14ab81a1b6b73f59845e', NULL, 'customer', 'Active', '1954dfa43d10bfcc62e2cdce8d1545e05811959846e8bd8734e361d9548bd10b6eb5e3db33d253fab56d9020d193a47a6055', '2025-01-27 07:36:40', NULL),
-(13, 'Ivan ablanida', 'ejthecoders@gmail.com', '09957939703', '4297f44b13955235245b2497399d7a93', 'user-image 7.png', 'Seller', 'Verified', NULL, NULL, NULL);
+INSERT INTO `tbl_user` (`id`, `full_name`, `email`, `phone`, `password`, `photo`, `role`, `status`, `reset_token`, `token_expiry`, `reset_code`, `verification`, `e-signature`) VALUES
+(1, 'Erick Matte', 'admin@gmail.com', '099999878', '0192023a7bbd73250516f069df18b500', 'user-11.jpeg', 'Admin', 'Active', NULL, NULL, NULL, 1, NULL),
+(2, 'Ivan', 'rider1@gmail.com', '098192732', '4297f44b13955235245b2497399d7a93', NULL, 'Rider', 'Active', NULL, NULL, NULL, 1, 'signature_67a1a85e1d3818.58870827.jpg'),
+(3, 'asdasdas', 'seller1@gmail.com', '0891723861', 'a8f5f167f44f4964e6c998dee827110c', 'user-user.png', 'Seller', 'Verified', NULL, NULL, NULL, 1, NULL),
+(4, 'Adsad asdasdsa', 'customer1@gmail.com', '09218759834', '4297f44b13955235245b2497399d7a93', NULL, 'customer', 'Active', NULL, NULL, NULL, 1, NULL),
+(5, 'Example Customer', 'example@gmail.com', '0978293452', '4297f44b13955235245b2497399d7a93', '', 'customer', 'Active', 'f5bc57741cd10657bb545124a304d7e5486bb70e0369ef6891b627641af3cc350d03f2ee21bd905e642118e83ce300e40c38', NULL, NULL, 1, NULL),
+(12, 'Ablanida Ivan ', 'ejthecoder@gmail.com', '09957939703', '9b05bca7461a14ab81a1b6b73f59845e', NULL, 'customer', 'Active', '1954dfa43d10bfcc62e2cdce8d1545e05811959846e8bd8734e361d9548bd10b6eb5e3db33d253fab56d9020d193a47a6055', '2025-01-27 07:36:40', NULL, 1, NULL),
+(14, 'Ayeng ', 'aye@gmail.com', '09263748561', '590d254e339d58409720c38ef21b1e2d', 'user-gicon.png', 'Seller', 'Verified', NULL, NULL, NULL, 1, NULL),
+(15, 'Daryll', 'daryll@gmail.com', '09875479864', '66abaf9840afc01c662b47cf2265ece1', 'user-bicon.png', 'Seller', 'Verified', NULL, NULL, NULL, 1, NULL),
+(16, 'Christian Charles  Mabacas', 'christiancharles1107@gmail.com', '09177504261', '5b0e4d556e22df3290fc9964157fa9dd', NULL, 'customer', 'Pending', NULL, NULL, NULL, 1, NULL),
+(17, 'Darwin', 'darwin@gmail.com', '09654648932', 'baeb7467a4f22fc84b74a85569fed2c3', 'user-bicon.png', 'Rider', 'Active', NULL, NULL, NULL, 1, NULL),
+(18, 'recipe  secret', 'nobitzkii@gmail.com', '0917345632', 'a72eff3308d43f0f5c7fead6bfd8fa93', NULL, 'customer', 'Pending', NULL, NULL, NULL, 1, NULL),
+(19, 'Janessa Marielle Cruz', 'cruzjanessa17@gmail.com', '09361559549', 'e10adc3949ba59abbe56e057f20f883e', NULL, 'customer', 'Pending', NULL, NULL, NULL, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -2041,7 +2127,7 @@ ALTER TABLE `messages`
 -- AUTO_INCREMENT for table `tbl_billing_address`
 --
 ALTER TABLE `tbl_billing_address`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `tbl_color`
@@ -2059,7 +2145,7 @@ ALTER TABLE `tbl_country`
 -- AUTO_INCREMENT for table `tbl_customer`
 --
 ALTER TABLE `tbl_customer`
-  MODIFY `cust_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `cust_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `tbl_customer_message`
@@ -2083,13 +2169,13 @@ ALTER TABLE `tbl_end_category`
 -- AUTO_INCREMENT for table `tbl_faq`
 --
 ALTER TABLE `tbl_faq`
-  MODIFY `faq_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `faq_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `tbl_inventory`
 --
 ALTER TABLE `tbl_inventory`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT for table `tbl_language`
@@ -2107,7 +2193,7 @@ ALTER TABLE `tbl_messages`
 -- AUTO_INCREMENT for table `tbl_mid_category`
 --
 ALTER TABLE `tbl_mid_category`
-  MODIFY `mcat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `mcat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `tbl_order`
@@ -2143,13 +2229,13 @@ ALTER TABLE `tbl_post`
 -- AUTO_INCREMENT for table `tbl_product`
 --
 ALTER TABLE `tbl_product`
-  MODIFY `p_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `p_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `tbl_product_category`
 --
 ALTER TABLE `tbl_product_category`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `tbl_product_color`
@@ -2161,31 +2247,31 @@ ALTER TABLE `tbl_product_color`
 -- AUTO_INCREMENT for table `tbl_product_photo`
 --
 ALTER TABLE `tbl_product_photo`
-  MODIFY `pp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `pp_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tbl_product_size`
 --
 ALTER TABLE `tbl_product_size`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT for table `tbl_purchase_item`
 --
 ALTER TABLE `tbl_purchase_item`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `tbl_purchase_order`
 --
 ALTER TABLE `tbl_purchase_order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `tbl_purchase_payment`
 --
 ALTER TABLE `tbl_purchase_payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `tbl_rating`
@@ -2203,25 +2289,25 @@ ALTER TABLE `tbl_realtime_message`
 -- AUTO_INCREMENT for table `tbl_recipe`
 --
 ALTER TABLE `tbl_recipe`
-  MODIFY `r_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `r_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `tbl_recipe_product`
 --
 ALTER TABLE `tbl_recipe_product`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tbl_rider`
 --
 ALTER TABLE `tbl_rider`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `tbl_seller`
 --
 ALTER TABLE `tbl_seller`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `tbl_service`
@@ -2251,7 +2337,7 @@ ALTER TABLE `tbl_settings`
 -- AUTO_INCREMENT for table `tbl_shipping_address`
 --
 ALTER TABLE `tbl_shipping_address`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `tbl_shipping_cost`
@@ -2299,13 +2385,13 @@ ALTER TABLE `tbl_subscriber`
 -- AUTO_INCREMENT for table `tbl_top_category`
 --
 ALTER TABLE `tbl_top_category`
-  MODIFY `tcat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `tcat_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `tbl_user`
 --
 ALTER TABLE `tbl_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `tbl_video`

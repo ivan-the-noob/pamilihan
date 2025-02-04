@@ -9,7 +9,7 @@ $cur_page = substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+
 $c = new CustomizeClass();
 $csrf = new CSRF_Protect();
 
-$allOrders = "SELECT pp.total_amount as total_price, pp.transaction_id as transaction_id, o.* FROM tbl_purchase_order o JOIN tbl_purchase_payment pp ON o.order_id=pp.order_id WHERE o.customer_id=:c_id ORDER BY o.id DESC";
+$allOrders = "SELECT pp.total_amount as total_price, pp.transaction_id as transaction_id, o.*, o.estimated_time as estimated_time FROM tbl_purchase_order o JOIN tbl_purchase_payment pp ON o.order_id=pp.order_id WHERE o.customer_id=:c_id ORDER BY o.id DESC";
 $allOrdersP = [
     ":c_id"     =>  $_SESSION['customer']['id']
 ];
@@ -52,6 +52,7 @@ $status = "";
                     $transactionId =  $r['transaction_id'];
                     $dat = date("M. d, Y (h:i A)", $r['date_and_time']);
                     $stat = $r['status'];
+                    $estimatedTime = $r['estimated_time'];
     
                     $sql = "SELECT COUNT(order_id) AS totalOrder FROM tbl_purchase_item WHERE order_id=:ordId";
                     $p = [
@@ -110,7 +111,12 @@ $status = "";
                                 if($itemNo == 1){
                                     ?>
                                     <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>"><?= $php; ?><?= number_format($totalPrice, 2); ?></td>
-                                    <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>"><?= $transactionId; ?></td>
+                                    <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>">
+                                        <?= $transactionId; ?><br>
+                                        <?php if($estimatedTime !== null): ?>
+                                            <p class="mb-0 text-center" style="white-space: nowrap;">Deliver Time:<br><?= $estimatedTime; ?> Minutes </p>
+                                        <?php endif; ?>
+                                    </td>
                                     <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>" width="175px"><?= $dat; ?></td>
                                     <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>"><?= $r['remarks']; ?><?php if($stat == "Delivering Items"){ echo '<a href="chat.php <button type="button" class="btn btn-success" style="border-radius: 5px !important;"><span class="icon-message"></span>&nbsp;Chat</a></button>'; }else if($stat == "Pending"){ ?><button class="btn btn-sm btn-danger cancelOrder" data-order="<?= $orderId;?>" style="border-radius: 5px !important;">Cancel</button><?php } ?></td>
                                     <?php
