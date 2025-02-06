@@ -88,11 +88,11 @@ if(isset($_POST['form1'])) {
 								<tr class="text-center">
 									<th>Select</th>
 									<th>No. </th>
-									<th>&nbsp;</th>
 									<th>Product Name</th>
 									<th>Price</th>
 									<th>Quantity</th>
 									<th>Total</th>
+                                    <th>Actions</th>
 									<th>&nbsp;</th>
 								</tr>
 								</thead>
@@ -115,7 +115,7 @@ if(isset($_POST['form1'])) {
         $index = 1;
         $i = 0;
 
-        // Retrieve the cart data (product information, seller, size, etc.)
+
         foreach($_SESSION['cart_p_id'] as $key => $value) {
             $i++;
             $arr_cart_p_id[$i] = $value;

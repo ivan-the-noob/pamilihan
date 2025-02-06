@@ -92,6 +92,7 @@ if(isset($_SESSION['customer'])){
 
     <link rel="stylesheet" href="css/bootstrap-datepicker.css">
     <link rel="stylesheet" href="css/jquery.timepicker.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     
     <link rel="stylesheet" href="css/flaticon.css">

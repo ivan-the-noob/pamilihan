@@ -2,6 +2,62 @@
 if(!isset($_SESSION['customer'])){
 	header("Location: login.php?page=shop.php");
 }
+if(isset($_SESSION['customer'])){
+    // Fetch customer details
+    $u = "SELECT * FROM tbl_user WHERE id=:user_id";
+    $p = [":user_id" => $_SESSION['customer']['id']];
+    $m = $c->fetchData($pdo, $u, $p);
+    
+    if($m){
+        foreach($m as $pp){
+            $userFullName = $pp['full_name'];
+        }
+    }
+
+    // Get today's date (Unix timestamp)
+    $today = time();  
+    $startOfDay = strtotime("today", $today); 
+    $endOfDay = strtotime("tomorrow", $today) - 1; 
+
+    // Modify SQL to fetch payment method along with total amount
+    $sql = "SELECT o.order_id, p.total_amount, p.payment_method
+            FROM tbl_purchase_order o
+            JOIN tbl_purchase_payment p ON o.order_id = p.order_id
+            WHERE o.customer_id = :customer_id AND p.date_and_time BETWEEN :start_of_day AND :end_of_day";
+    
+    $p = [
+        ":customer_id" => $_SESSION['customer']['id'],
+        ":start_of_day" => $startOfDay,
+        ":end_of_day" => $endOfDay
+    ];
+
+    $orders = $c->fetchData($pdo, $sql, $p);
+
+    $totalAmountToday = 0;
+    $disableCodOption = false;  // Variable to check if COD should be disabled
+    $disableGcashOption = false;  // Variable to check if Gcash should be disabled
+    
+    if($orders){
+        foreach($orders as $order){
+            $totalAmountToday += $order['total_amount'];
+            if ($order['payment_method'] == 'cod' && $order['total_amount'] >= 1000) {
+                $disableCodOption = true;  // Disable COD option if condition is met
+            }
+            if ($order['payment_method'] == 'gcash' && $order['total_amount'] >= 1000) {
+                $disableGcashOption = true;  // Disable Gcash option if condition is met
+            }
+        }
+    }
+
+    // Check if the total amount exceeds or is equal to 1000
+    if($totalAmountToday >= 1000){
+        echo '<script>
+            $(document).ready(function(){
+                $("#maxAmountModal").modal("show");
+            });
+        </script>';
+    }
+}
 $B_fullName = "";
 $B_phone = "";
 $B_address = "";
@@ -136,7 +192,7 @@ if(isset($_SESSION['cart_p_id'])){
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-xl-8 ftco-animate p-3 border">
-				<div class="row align-items-end">
+				<div class="row align-items-start">
 					<div class="col-md-6">
 						<h3 class="mt-3 billing-heading">Billing Details</h3>
 						<hr/>
@@ -168,6 +224,38 @@ if(isset($_SESSION['cart_p_id'])){
 					<div class="col-md-6">
 						<div class="row align-items-end">
 							<div class="col-md-12">
+							<div class="card mb-1">
+								<div class="card-body">
+									<div class="card-title">Payment Method</div>
+									<select id="payment-method" name="payment_method" class="form-control" required>
+										<option value="" disabled selected>Select Payment</option>
+										<option value="cod" <?php echo ($disableCodOption) ? 'disabled' : ''; ?> id="cod-option">
+											<?php echo ($disableCodOption) ? 'COD MAXED CHECKOUT' : 'Cash on Delivery (COD)'; ?>
+										</option>
+										<option value="gcash" <?php echo ($disableGcashOption) ? 'disabled' : ''; ?> id="gcash-option">
+											<?php echo ($disableGcashOption) ? 'Gcash MAXED CHECKOUT' : 'Gcash'; ?>
+										</option>
+									</select>
+
+									<p id="payment-error" style="color: red;">Please select payment method first</p> <!-- Error message -->
+
+									<div id="gcashFields" style="display: none; margin-top: 10px;">
+										<label for="gcashName">Name</label>
+										<input type="text" id="gcashName" name="gcash_name" class="form-control" placeholder="Enter your name">
+
+										<label for="gcashImage">Upload Image</label>
+										<input type="file" id="gcashImage" name="gcash_image" class="form-control">
+
+										<label for="gcashReference">Reference Number</label>
+										<input type="number" id="gcashReference" name="gcash_reference" class="form-control" placeholder="Enter reference number">
+									</div>
+
+								</div>
+							</div>
+
+
+						
+
 							<div class="card bg-white" style="height: 70vh; overflow-y: 10px;">
 								<div class="card-body">
 									<h5 class="card-title">Order Summary</h5>
@@ -262,7 +350,7 @@ if(isset($_SESSION['cart_p_id'])){
 							<span>Total</span>
 							<span><?= $php; ?><?= number_format($totalAmount, 2); ?></span>
 						</p>
-						<p><a href="#" class="btn btn-primary btn-block py-3 px-4 placeOrder">Place an order</a></p>
+						<p><a href="#" class="btn btn-primary btn-block py-3 px-4 placeOrder" id="place-order-btn" disabled>Select payment method first</a></p> <!-- Place Order Button -->
 					</div>
 	          	</div>
 	          </div>
@@ -275,26 +363,85 @@ if(isset($_SESSION['cart_p_id'])){
 <?php include_once('footer.php');?>
 <script>
 	$(document).ready(function(){
-		$(document).on('click', '.placeOrder', function(e){
-			e.preventDefault();
-			var myId = "<?= $_SESSION['customer']['id']; ?>";
-			var myTotal = "<?= $totalAmount; ?>";
-			if(confirm("Are you sure you want to order these items for at least <?= number_format($totalAmount,2);?>php?")){
-				$.ajax({
-					url:"action.php",
-					method:"POST",
-					data:{'myId':myId,'myTotal':myTotal,'checkout':true},
-					dataType:"JSON",
-					success:function(data){
-						if(data.error != ""){
-							alert(data.error);
-						}else{
-							alert(data.success);
-							window.location.href="checkout-process.php";
-						}
-					}
-				});
-			}
-		});
-	});
+    $(document).on('click', '.placeOrder', function(e){
+        e.preventDefault();
+        var myId = "<?= $_SESSION['customer']['id']; ?>";
+        var myTotal = "<?= $totalAmount; ?>";
+
+        if(confirm("Are you sure you want to order these items for at least <?= number_format($totalAmount,2);?>php?")){
+
+            var formData = new FormData();
+            formData.append('myId', myId);
+            formData.append('myTotal', myTotal);
+            formData.append('checkout', true);
+            formData.append('payment_method', $("#payment-method").val());  // This matches the name attribute in HTML
+            formData.append('gcash_name', $("#gcashName").val());
+            formData.append('gcash_reference', $("#gcashReference").val());
+
+            // Handle file input for Gcash image
+            var gcashImage = $("#gcashImage")[0].files[0];
+            if (gcashImage) {
+                formData.append('gcash_image', gcashImage);
+            }
+
+            $.ajax({
+                url: "action.php",
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false, 
+                dataType: "JSON",
+                success: function(data) {
+                    if (data.error != "") {
+                        alert(data.error);
+                    } else {
+                        alert(data.success);
+                        window.location.href = "checkout-process.php";
+                    }
+                }
+            });
+        }
+    });
+});
+
+</script>
+
+<script>
+    document.getElementById("payment-method").addEventListener("change", function() {
+        var gcashFields = document.getElementById("gcashFields");
+        var gcashInputs = gcashFields.querySelectorAll("input");
+
+        if (this.value === "gcash") {
+            gcashFields.style.display = "block";
+            gcashInputs.forEach(input => input.required = true);
+        } else {
+            gcashFields.style.display = "none";
+            gcashInputs.forEach(input => input.required = false);
+        }
+    });
+</script>
+
+<!-- JavaScript to handle the "Place an Order" button -->
+<script>
+    // Show the error message initially since no selection is made
+    document.getElementById('payment-error').style.display = 'block';
+
+    // Disable the "Place an order" button initially
+    var placeOrderBtn = document.getElementById('place-order-btn');
+    placeOrderBtn.disabled = true;
+
+    document.getElementById('payment-method').addEventListener('change', function() {
+        var paymentMethod = this.value;
+
+        // Hide the error message when a valid payment method is selected
+        if (paymentMethod) {
+            document.getElementById('payment-error').style.display = 'none';
+            placeOrderBtn.disabled = false; // Enable the "Place an order" button
+            placeOrderBtn.textContent = 'Place an order'; // Reset the text
+        } else {
+            document.getElementById('payment-error').style.display = 'block';
+            placeOrderBtn.disabled = true; // Disable the "Place an order" button
+            placeOrderBtn.textContent = 'Select payment method first'; // Update the text
+        }
+    });
 </script>

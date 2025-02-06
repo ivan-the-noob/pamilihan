@@ -156,10 +156,11 @@ if($success_message != '') {
                         <th width="5px">#</th>
                         <th>Order ID</th>
                         <th>Customer</th>
+                        <th>Product</th>
                         <th>Total Amount</th>
                         <th>Payment Status</th>
                         <th>Order Status</th>
-                        <th width="50px" class="text-center">Assigned Rider</th>
+                        <th  class="text-center">Assigned Rider</th>
                         <th>Remarks</th>
                         <th>Action</th>
                     </tr>
@@ -204,6 +205,21 @@ if($success_message != '') {
                                         }
                                         ?>
                                     </td>
+                                        <?php
+                                            $order_id = $row['order_id'];
+                                            $sql = "SELECT i.product_qty, pr.p_name 
+                                                    FROM tbl_purchase_item i
+                                                    LEFT JOIN tbl_product pr ON i.product_id = pr.p_id
+                                                    WHERE i.order_id = :order_id";
+                                            $stmt = $pdo->prepare($sql);
+                                            $stmt->execute([':order_id' => $order_id]);
+                                            $item = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                                            $product_qty = $item ? htmlspecialchars($item['product_qty']): 'N/A';
+                                            $p_name = $item ? htmlspecialchars($item['p_name']) : 'N/A';
+                                        ?>
+                                    <td><?= $p_name; ?>, <?= $product_qty; ?>qty<br><hr></td>
+
                                     <td><?= $php; ?><?= number_format($row['total_amount']); ?></td>
                                     <td><?php 
                                         if($row['transaction_status'] == "Pending" && $row['status'] == "In Transit" || $row['transaction_status'] == "Pending" && $row['status'] == "Delivered" || $row['transaction_status'] == "Pending" && $row['status'] == "Completed"){
@@ -219,7 +235,38 @@ if($success_message != '') {
                                             -
                                             <?php 
                                         }
-                                    ?></td>
+                                    ?><?php
+                                    $sql = "SELECT p.payment_method, p.gcash_name, p.gcash_image, p.gcash_reference, p.cancel_reason
+                                            FROM tbl_purchase_payment p
+                                            WHERE p.order_id = :order_id";
+                                    $stmt = $pdo->prepare($sql);
+                                    $stmt->execute([':order_id' => $order_id]);
+                                    $payment = $stmt->fetch(PDO::FETCH_ASSOC);
+                                    
+                                    $payment_method = $payment ? htmlspecialchars($payment['payment_method']) : 'N/A';
+                                    $gcash_name = $payment ? htmlspecialchars($payment['gcash_name']) : 'N/A';
+                                    $gcash_image = $payment ? htmlspecialchars($payment['gcash_image']) : 'N/A';
+                                    $gcash_reference = $payment ? htmlspecialchars($payment['gcash_reference']) : 'N/A';
+                                    $cancel_reason = $payment ? htmlspecialchars($payment['cancel_reason']) : 'N/A';
+                                    ?><br>
+                                    <?= $payment_method; ?><br>
+                                    <?= $gcash_name; ?><br>
+                                    
+                                    <?php if ($gcash_image != 'N/A' && $payment_method != 'cod') : ?>
+                                        <a href="#" data-toggle="modal" data-target="#gcashImageModal">
+                                            <img src="../assets/img/gcash/<?= $gcash_image; ?>" alt="GCash Image" class="img-thumbnail" style="max-width: 100px; cursor: pointer;">
+                                        </a>
+                                    <?php endif; ?>
+
+                                    <div class="modal fade" id="gcashImageModal" tabindex="-1" role="dialog" aria-labelledby="gcashImageModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-body">
+                                                    <img src="../assets/img/gcash/<?= $gcash_image; ?>" alt="GCash Image" class="img-fluid" style="width: 100%; height: 100%">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <td>
                                         <?php if($row['status'] == "Pending"){ ?>
                                             Pending
@@ -237,7 +284,7 @@ if($success_message != '') {
                                             <span class="text text-success"><?= $row['status']; ?></span>
                                         <?php } ?>
                                     </td>
-                                    <td width="200px"><?php if($row['rider_id'] == ""){ echo '-';}else{ ?>
+                                    <td width="100px"><?php if($row['rider_id'] == ""){ echo '-';}else{ ?>
                                         <?php
                                             $sql10 = "SELECT r.license_number AS license, r.vehicle_type AS vType, r.vehicle_model AS model, r.vehicle_plate_no AS plate_no, u.* FROM tbl_user u JOIN tbl_rider r ON u.id=r.user_id WHERE u.id=:ridId";
                                             $p10 = [
@@ -257,7 +304,8 @@ if($success_message != '') {
                                         ?>
                                         <?php } ?>
                                     </td>
-                                    <td><?php if($row['remarks'] == ""){ echo '-';}else{ ?><?= $row['remarks']; ?><?php } ?></td>
+                                    <td><?php if($row['remarks'] == ""){ echo '-';}else{ ?><?= $row['remarks']; ?><br>
+                                        Reason: <?= $cancel_reason; ?><?php } ?></td>
                                     <td><?php 
                                         if($row['status'] == "Pending"){
                                             ?>

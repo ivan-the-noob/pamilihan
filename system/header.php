@@ -226,6 +226,11 @@ if(!isset($_SESSION['user'])) {
 			            <i class="fa fa-question-circle"></i> <span>FAQ</span>
 			          </a>
 			        </li>
+					<li class="treeview <?php if( ($cur_page == 'reports.php') ) {echo 'active';} ?>">
+			          <a href="reports.php">
+					  <i class="fa fa-flag"></i> <span>Report</span>
+			          </a>
+			        </li>
 					<li class="treeview <?php if($cur_page == 'seller.php' || $cur_page == 'customer.php' || $cur_page == 'rider.php' ) {echo 'active';} ?>">
 						<a href="#">
                             <i class="fa fa-users"></i>

@@ -9,10 +9,29 @@ $cur_page = substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+
 $c = new CustomizeClass();
 $csrf = new CSRF_Protect();
 
-$allOrders = "SELECT pp.total_amount as total_price, pp.transaction_id as transaction_id, o.*, o.estimated_time as estimated_time FROM tbl_purchase_order o JOIN tbl_purchase_payment pp ON o.order_id=pp.order_id WHERE o.customer_id=:c_id ORDER BY o.id DESC";
+$allOrders = "
+    SELECT 
+        pp.total_amount AS total_price, 
+        pp.transaction_id AS transaction_id, 
+        o.*, 
+        o.estimated_time AS estimated_time,
+        u.full_name, 
+        u.email AS rider_email,
+        r.vehicle_type,
+        r.vehicle_model,
+        r.vehicle_plate_no
+    FROM tbl_purchase_order o
+    JOIN tbl_purchase_payment pp ON o.order_id = pp.order_id
+    LEFT JOIN tbl_user u ON o.rider_id = u.id
+    LEFT JOIN tbl_rider r ON o.rider_id = r.user_id
+    WHERE o.customer_id = :c_id 
+    ORDER BY o.id DESC
+";
+
 $allOrdersP = [
-    ":c_id"     =>  $_SESSION['customer']['id']
+    ":c_id" => $_SESSION['customer']['id']
 ];
+
 $allOrdersS = $c->fetchData($pdo, $allOrders, $allOrdersP);
 
 $orderId = "";
@@ -20,6 +39,12 @@ $totalPrice = "";
 $transactionId = "";
 $dat = "";
 $status = "";
+$rider_id = "";
+$full_name = "";
+$vehicle_type = "";
+$vehicle_model = "";
+$vehicle_plate_no = "";
+
 
 ?>
 <div class="cart-list">
@@ -32,6 +57,7 @@ $status = "";
                 <th rowspan="2" class="border">Total Amount</th>
                 <th rowspan="2" class="border">Transaction ID</th>
                 <th rowspan="2" class="border">Date</th>
+                <th rowspan="2" class="border">Rider</th>
                 <th rowspan="2" class="border">Order Status</th>
             </tr>
             <tr>
@@ -53,6 +79,11 @@ $status = "";
                     $dat = date("M. d, Y (h:i A)", $r['date_and_time']);
                     $stat = $r['status'];
                     $estimatedTime = $r['estimated_time'];
+                    $rider_id = $r['rider_id'];
+                    $full_name = $r['full_name'];
+                    $vehicle_type = $r['vehicle_type'];
+                    $vehicle_model = $r['vehicle_model'];
+                    $vehicle_plate_no = $r['vehicle_plate_no'];
     
                     $sql = "SELECT COUNT(order_id) AS totalOrder FROM tbl_purchase_item WHERE order_id=:ordId";
                     $p = [
@@ -64,6 +95,8 @@ $status = "";
                         $totalOrder = $ro['totalOrder'] + 1;
                     }
                     ?>
+
+                   
                     <tr>
                         <td rowspan="<?= $totalOrder; ?>" class="border" style="border: 1px solid #E5E5E5 !important;"><?= $no; ?>.</td>
                         <td rowspan="<?= $totalOrder; ?>" class="border" style="border: 1px solid #E5E5E5 !important;"><span><b><?= $orderId; ?></b></span></td>
@@ -118,11 +151,54 @@ $status = "";
                                         <?php endif; ?>
                                     </td>
                                     <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>" width="175px"><?= $dat; ?></td>
-                                    <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>"><?= $r['remarks']; ?><?php if($stat == "Delivering Items"){ echo '<a href="chat.php <button type="button" class="btn btn-success" style="border-radius: 5px !important;"><span class="icon-message"></span>&nbsp;Chat</a></button>'; }else if($stat == "Pending"){ ?><button class="btn btn-sm btn-danger cancelOrder" data-order="<?= $orderId;?>" style="border-radius: 5px !important;">Cancel</button><?php } ?></td>
+                                    <?php if (!empty($rider_id)): ?>
+                                        <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>" width="175px">
+                                        <?= $full_name; ?><br>
+                                        <?= $vehicle_type; ?><br>
+                                        <?= $vehicle_model; ?><br>
+                                        <?= $vehicle_plate_no;?>
+
+                                        </td>
+                                        <?php else: ?>
+                                        <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>" width="175px">Pending</td>
+                                        <?php endif; ?>
+                                    <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>"><?= $r['remarks']; ?><?php if($stat == "Delivering Items"){ echo '<a href="chat.php <button type="button" class="btn btn-success" style="border-radius: 5px !important;"><span class="icon-message"></span>&nbsp;Chat</a></button>'; }else if($stat == "Pending"){ ?><button class="btn btn-sm btn-danger cancelOrder" data-order="<?= $orderId;?>" style="border-radius: 5px !important;">Cancel</button>
+                                        <div class="modal fade" id="cancelOrderModal" tabindex="-1" role="dialog" aria-labelledby="cancelOrderModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered" role="document">
+                                            <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="cancelOrderModalLabel">Cancel Order</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <form id="cancelOrderForm" method="POST" action="cancel_reason.php">
+                                                <div class="modal-body">
+                                                <p>Are you sure you want to cancel your order?</p>
+
+                                                <div class="form-group">
+                                                    <label for="cancelReason">Reason for Cancellation:</label>
+                                                    <textarea class="form-control" id="cancelReason" name="cancel_reason" rows="3" placeholder="Enter reason for cancellation"></textarea>
+                                                </div>
+
+                                                <input type="hidden" id="order_id" name="order_id" value="<?= $orderId; ?>">
+                                                </div>
+                                                <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                <button type="submit" class="btn btn-danger">Cancel Order</button>
+                                                </div>
+                                            </form>
+                                            </div>
+                                        </div>
+                    </div><?php } ?></td>
                                     <?php
                                 }
                                 ?>
+                               
+                                
+
                             </tr>
+                           
                             <?php
                             $itemNo++;
                         }

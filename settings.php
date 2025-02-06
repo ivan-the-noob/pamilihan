@@ -24,59 +24,74 @@ include_once("footer.php");
             var name = $(this).data('name');
             $('.myOrderMenu').css({ "border-bottom": 'none' });
             if(name == "allOrders"){
-                $(this).css({ "border-bottom": "1px solid black"});
-                $('.viewPurchase').html('<center><div class="m-5 h-100"><img src="assets/uploads/loading.gif" style="width: 50%; height: 50%;"/></div></center>');
-                setTimeout(function(){
-                    $('.viewPurchase').load('all-orders.php');
-                }, 750);
-                $(document).on('click', '.cancelOrder', function(e){
-                    e.preventDefault();
-                    var dataOrder = $(this).data("order");
-                    if(confirm("Are you sure you want to cancel your order?")){
-                        $.ajax({
-                            url:"action.php",
-                            method:"POST",
-                            data:{"order_id":dataOrder, "cancelMyOrder":true},
-                            dataType:"HTML",
-                            success:function(data){
-                                if(data == "success"){
-                                    $('.viewPurchase').html('<center><div class="m-5 h-100"><img src="assets/uploads/loading.gif" style="width: 50%; height: 50%;"/></div></center>');
-                                    setTimeout(function(){
-                                        $('.viewPurchase').load('all-orders.php');
-                                    }, 750);
+                    $(this).css({ "border-bottom": "1px solid black"});
+                    $('.viewPurchase').html('<center><div class="m-5 h-100"><img src="assets/uploads/loading.gif" style="width: 50%; height: 50%;"/></div></center>');
+                    setTimeout(function(){
+                        $('.viewPurchase').load('all-orders.php');
+                    }, 750);
+
+                    $(document).on('click', '.cancelOrder', function(e){
+                        e.preventDefault();
+                        var dataOrder = $(this).data("order");
+
+                        $('#cancelOrderModal').modal('show');
+
+                        $('#confirmCancelOrder').off('click').on('click', function(){
+                            $.ajax({
+                                url: "action.php",
+                                method: "POST",
+                                data: { "order_id": dataOrder, "cancelMyOrder": true },
+                                dataType: "HTML",
+                                success: function(data){
+                                    if(data == "success"){
+                                        $('.viewPurchase').html('<center><div class="m-5 h-100"><img src="assets/uploads/loading.gif" style="width: 50%; height: 50%;"/></div></center>');
+                                        setTimeout(function(){
+                                            $('.viewPurchase').load('all-orders.php');
+                                        }, 750);
+                                    }
+                                    // Close the modal after success
+                                    $('#cancelOrderModal').modal('hide');
                                 }
-                            }
+                            });
                         });
-                    }
-                });
-            }
+                    });
+                }
             if(name == "allProcessing"){
                 $(this).css({ "border-bottom": "1px solid black"});
                 $('.viewPurchase').html('<center><div class="m-5 h-100"><img src="assets/uploads/loading.gif" style="width: 50%; height: 50%;"/></div></center>');
                 setTimeout(function(){
                     $('.viewPurchase').load('all-processing.php');
                 }, 750);
+
                 $(document).on('click', '.cancelOrder', function(e){
                     e.preventDefault();
                     var dataOrder = $(this).data("order");
-                    if(confirm("Are you sure you want to cancel your order?")){
+
+                    // Show the modal
+                    $('#cancelOrderModal').modal('show');
+
+                    // When the user confirms the cancellation
+                    $('#confirmCancelOrder').off('click').on('click', function(){
                         $.ajax({
-                            url:"action.php",
-                            method:"POST",
-                            data:{"order_id":dataOrder, "cancelMyOrder":true},
-                            dataType:"HTML",
-                            success:function(data){
+                            url: "action.php",
+                            method: "POST",
+                            data: { "order_id": dataOrder, "cancelMyOrder": true },
+                            dataType: "HTML",
+                            success: function(data){
                                 if(data == "success"){
                                     $('.viewPurchase').html('<center><div class="m-5 h-100"><img src="assets/uploads/loading.gif" style="width: 50%; height: 50%;"/></div></center>');
                                     setTimeout(function(){
                                         $('.viewPurchase').load('all-orders.php');
                                     }, 750);
                                 }
+                                // Close the modal after success
+                                $('#cancelOrderModal').modal('hide');
                             }
                         });
-                    }
+                    });
                 });
             }
+
             if(name == "allShipped"){
                 $(this).css({ "border-bottom": "1px solid black"});
                 $('.viewPurchase').html('<center><div class="m-5 h-100"><img src="assets/uploads/loading.gif" style="width: 50%; height: 50%;"/></div></center>');
@@ -379,3 +394,5 @@ $(document).on('click', '#verifyCode', function (e) {
         });
     });
 </script>
+
+<!-- Modal -->

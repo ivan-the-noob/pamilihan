@@ -9,11 +9,31 @@ $cur_page = substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+
 $c = new CustomizeClass();
 $csrf = new CSRF_Protect();
 
-$allOrders = "SELECT pp.total_amount as total_price, pp.transaction_id as transaction_id, o.* FROM tbl_purchase_order o JOIN tbl_purchase_payment pp ON o.order_id=pp.order_id WHERE o.customer_id=:c_id AND status='Delivered' OR o.customer_id=:c_id AND status='Completed' ORDER BY o.id DESC";
+$allOrders = "
+    SELECT 
+        pp.total_amount AS total_price, 
+        pp.transaction_id AS transaction_id, 
+        o.*, 
+        o.estimated_time AS estimated_time,
+        u.full_name, 
+        u.email AS rider_email,
+        r.vehicle_type,
+        r.vehicle_model,
+        r.vehicle_plate_no,
+        pi.seller_id
+    FROM tbl_purchase_order o
+    JOIN tbl_purchase_payment pp ON o.order_id = pp.order_id
+    LEFT JOIN tbl_user u ON o.rider_id = u.id
+    LEFT JOIN tbl_rider r ON o.rider_id = r.user_id
+    LEFT JOIN tbl_purchase_item pi ON o.order_id = pi.order_id
+    WHERE o.customer_id = :c_id 
+    ORDER BY o.id DESC
+";
+
 $allOrdersP = [
-    ":c_id"     =>  $_SESSION['customer']['id'],
-    ":c_id"     =>  $_SESSION['customer']['id']
+    ":c_id" => $_SESSION['customer']['id']
 ];
+
 $allOrdersS = $c->fetchData($pdo, $allOrders, $allOrdersP);
 
 $orderId = "";
@@ -21,6 +41,16 @@ $totalPrice = "";
 $transactionId = "";
 $dat = "";
 $status = "";
+$rider_id = "";
+$full_name = "";
+$vehicle_type = "";
+$vehicle_model = "";
+$vehicle_plate_no = "";
+$seller_status = "";
+$driver_status = "";
+$seller_rating_status = "";
+$rider_rating_status = "";
+$seller_rating_status= "";
 
 ?>
 <div class="cart-list">
@@ -33,6 +63,7 @@ $status = "";
                 <th rowspan="2" class="border">Total Amount</th>
                 <th rowspan="2" class="border">Transaction ID</th>
                 <th rowspan="2" class="border">Date</th>
+                <th rowspan="2" class="border">Rider</th>
                 <th rowspan="2" class="border">Order Status</th>
             </tr>
             <tr>
@@ -53,6 +84,15 @@ $status = "";
                     $transactionId =  $r['transaction_id'];
                     $dat = date("M. d, Y (h:i A)", $r['date_and_time']);
                     $stat = $r['status'];
+                    $full_name = $r['full_name'];
+                    $vehicle_type = $r['vehicle_type'];
+                    $vehicle_model = $r['vehicle_model'];
+                    $vehicle_type = $r['vehicle_type'];
+                    $rider_id = $r['rider_id'];
+                    $report_seller = $r['report_seller_status'];
+                    $report_rider = $r['report_rider_status'];
+                    $rate_rider = $r['rate_rider_status'];
+                    $rate_seller = $r['rate_seller_status'];
     
                     $sql = "SELECT COUNT(order_id) AS totalOrder FROM tbl_purchase_item WHERE order_id=:ordId";
                     $p = [
@@ -113,7 +153,203 @@ $status = "";
                                     <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>"><?= $php; ?><?= number_format($totalPrice, 2); ?></td>
                                     <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>"><?= $transactionId; ?></td>
                                     <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>" width="175px"><?= $dat; ?></td>
-                                    <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>"><?= $r['remarks']; ?><?php if($stat == "Pending" || $stat == "In Transit"){ echo '<button type="button" class="btn btn-secondary" style="border-radius: 5px !important;"><span class="icon-map-marker"></span>&nbsp;Track</button>'; } ?></td>
+                                    <?php if (!empty($rider_id)): ?>
+                                        <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>" width="175px">
+                                            <?= $full_name; ?><br>
+                                            <?= $vehicle_type; ?><br>
+                                            <?= $vehicle_model; ?><br>
+                                            <?= $vehicle_plate_no; ?>
+                                            <?php
+                                            if ($report_rider == 0): ?>
+                                               <button class="btn btn-danger btn-sm text-nowrap mb-1" id="reportRiderButton" data-toggle="modal" data-target="#reportRiderModal">Report Rider</button>
+                                            <?php endif; ?>
+                                            <?php
+                                            if($rate_rider == 0): ?>
+                                            <button class="btn btn-warning btn-sm text-nowrap text-white fw-bold" id="rateRiderButton" data-toggle="modal" data-target="#rateRiderModal">Rate Rider</button>
+                                            <?php endif; ?>
+                                        </td>
+                                    <?php else: ?>
+                                        <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>" width="175px">Pending</td>
+                                    <?php endif; ?>
+                                    <td style="border: 1px solid #E5E5E5 !important;" rowspan="<?= $totalOrder; ?>"><?= $r['remarks']; ?><?php if($stat == "Pending" || $stat == "In Transit"){ echo '<button type="button" class="btn btn-secondary" style="border-radius: 5px !important;"><span class="icon-map-marker"></span>&nbsp;Track</button>'; } ?>
+                                    
+                                    <?php if (!empty($rider_id)): ?>
+                                        <?php if ($report_seller == 0): ?>
+                                            <button class="btn btn-danger btn-sm text-nowrap mb-1" id="reportSellerButton" data-toggle="modal" data-target="#reportSellerModal">Report Seller</button>
+                                        <?php endif; ?>
+
+                                        <?php if ($rate_seller == 0): ?>
+                                            <button class="btn btn-warning btn-sm text-nowrap text-white fw-bold" id="rateSellerButton" data-toggle="modal" data-target="#rateSellerModal">Rate Seller</button>
+                                        <?php endif; ?>   
+                                           
+                                    <?php endif; ?>   
+                                   
+                                    <div class="modal fade" id="rateRiderModal" tabindex="-1" aria-labelledby="rateRiderModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="rateRiderModalLabel">Rate Rider</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="rateRiderForm">
+                                                        <input type="hidden" name="order_id" value="<?= $orderId; ?>">
+                                                        <input type="hidden" name="customer_id" value="<?= $r['customer_id']; ?>">
+                                                        <input type="hidden" name="rider_id" value="<?= $r['rider_id']; ?>">
+
+                                                        <div class="mb-3">
+                                                            <label for="rider_rating" class="form-label">Rating</label>
+                                                            <div class="star-rating d-flex justify-content-center">
+                                                                <input type="radio" id="star5" name="rider_rating" value="5" required />
+                                                                <label for="star5" title="5 stars"><i class="fa fa-star"></i></label>
+
+                                                                <input type="radio" id="star4" name="rider_rating" value="4" />
+                                                                <label for="star4" title="4 stars"><i class="fa fa-star"></i></label>
+
+                                                                <input type="radio" id="star3" name="rider_rating" value="3" />
+                                                                <label for="star3" title="3 stars"><i class="fa fa-star"></i></label>
+
+                                                                <input type="radio" id="star2" name="rider_rating" value="2" />
+                                                                <label for="star2" title="2 stars"><i class="fa fa-star"></i></label>
+
+                                                                <input type="radio" id="star1" name="rider_rating" value="1" />
+                                                                <label for="star1" title="1 star"><i class="fa fa-star"></i>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label for="feedback" class="form-label">Feedback</label>
+                                                            <textarea class="form-control" id="feedback" name="feedback" rows="3" required maxlength="100" placeholder="Max 100 letters."></textarea>
+                                                        </div>
+
+                                                       
+
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary">Submit Rating</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="modal fade" id="rateSellerModal" tabindex="-1" aria-labelledby="rateSellerLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="rateSellerLabel">Rate Seller</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <form id="rateSellerForm">
+                                                    <div class="modal-body">
+                                                    <input type="hidden" name="order_id" value="<?= $orderId; ?>">
+                                                        <input type="hidden" name="customer_id" value="<?= $r['customer_id']; ?>">
+                                                        <input type="hidden" name="seller_id" value="<?= $r['seller_id']; ?>">
+
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Rating</label>
+                                                            <div class="star-rating d-flex justify-content-center">
+                                                                <input type="radio" id="star5s" name="seller_rating" value="5" required />
+                                                                <label for="star5s"><i class="fa fa-star"></i></label>
+
+                                                                <input type="radio" id="star4s" name="seller_rating" value="4" />
+                                                                <label for="star4s"><i class="fa fa-star"></i></label>
+
+                                                                <input type="radio" id="star3s" name="seller_rating" value="3" />
+                                                                <label for="star3s"><i class="fa fa-star"></i></label>
+
+                                                                <input type="radio" id="star2s" name="seller_rating" value="2" />
+                                                                <label for="star2s"><i class="fa fa-star"></i></label>
+
+                                                                <input type="radio" id="star1s" name="seller_rating" value="1" />
+                                                                <label for="star1s"><i class="fa fa-star"></i></label>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Feedback</label>
+                                                            <textarea class="form-control" name="feedback" rows="3" required maxlength="100" placeholder="Max 100 letters."></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="modal fade" id="reportRiderModal" tabindex="-1" aria-labelledby="#reportRiderModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Report Rider</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <form id="reportRiderForm">
+                                                            <input type="hidden" name="order_id" value="<?= $orderId; ?>">
+                                                            <input type="hidden" name="customer_id" value="<?= $r['customer_id']; ?>">
+                                                            <input type="hidden" name="rider_id" value="<?= $r['rider_id']; ?>">
+                                                            <input type="hidden" name="seller_id" value="<?= $r['seller_id']; ?>">
+
+                                                            <div class="mb-3">
+                                                                <label for="report_reason_rider" class="form-label">Reason for Report</label>
+                                                                <textarea class="form-control" name="report_reason" id="report_reason_rider" rows="4" required></textarea>
+                                                            </div>
+
+                                                            <button type="submit" class="btn btn-danger">Submit Report</button>
+                                                        </form>
+                                                        <div id="reportRiderMessage" class="floating-message"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    <div class="modal fade" id="reportSellerModal" tabindex="-1" aria-labelledby="reportSellerModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Report Seller</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form id="reportForm">
+                                                        <input type="hidden" name="order_id" value="<?= $orderId; ?>">
+                                                        <input type="hidden" name="customer_id" value="<?= $r['customer_id']; ?>">
+                                                        <input type="hidden" name="rider_id" value="<?= $r['rider_id']; ?>">
+                                                        <input type="hidden" name="seller_id" value="<?= $r['seller_id']; ?>">
+
+                                                        <div class="mb-3">
+                                                            <label for="report_reason" class="form-label">Reason for Report</label>
+                                                            <textarea class="form-control" name="report_reason" id="report_reason" rows="4" required></textarea>
+                                                        </div>
+
+                                                        <button type="submit" class="btn btn-danger">Submit Report</button>
+                                                    </form>
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                     <div id="reportMessage" class="floating-message"></div>
+                                     <div id="rateRiderMessage" class="floating-message"></div>
+                                     <div id="rateSellerMessage" class="floating-message"></div>
+                                     
+
+                                    </div>
                                     <?php
                                 }
                                 ?>
@@ -135,3 +371,184 @@ $status = "";
         </tbody>
     </table>
 </div>
+ 
+<style>
+    .floating-message {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #28a745;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    z-index: 1050; 
+}
+
+/*Star Section*/
+
+.star-rating {
+    display: flex;
+    justify-content: flex-start;
+    font-size: 1.5rem; 
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-rating label {
+    color: #ccc;
+    cursor: pointer; 
+    transition: color 0.3s ease; 
+}
+
+.star-rating input[type="radio"]:checked ~ label i {
+    color: #ffca08; 
+}
+
+.star-rating label:hover i,
+.star-rating label:hover ~ label i {
+    color: #ffca08;
+}
+
+.star-rating {
+    flex-direction: row-reverse;
+}
+
+.star-rating i {
+    font-size: 1.5rem;
+}
+
+.star-rating input[type="radio"]:not(:checked) ~ label:hover i {
+    color: #ffca08;
+}
+
+/*Star Section End*/
+</style>
+
+
+<script>
+$(document).ready(function () {
+    $("#reportForm").submit(function (e) {
+        e.preventDefault(); 
+
+        $.ajax({
+            type: "POST",
+            url: "submit_report.php",
+            data: $(this).serialize(),
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    $("#reportSellerButton").hide();
+
+                    $("#reportSellerModal").modal("hide");
+
+                    setTimeout(function () {
+                        $("#reportMessage").text(response.message).fadeIn().delay(2000).fadeOut();
+                    }, 500);
+                } else {
+                    alert(response.message);  
+                }
+            },
+            error: function () {
+                alert("An error occurred while submitting the report.");
+            }
+        });
+    });
+});
+
+
+
+$('#reportRiderForm').on('submit', function(e) {
+    e.preventDefault();
+
+    var formData = $(this).serialize();  
+
+    $.ajax({
+        url: 'submit_report_rider.php',
+        method: 'POST',
+        data: formData,
+        success: function(response) {
+            if (response.success) {
+                $('#reportRiderModal').modal('hide');
+
+                $('#reportMessage').text(response.message).fadeIn();
+                setTimeout(function() {
+                    $('#reportMessage').fadeOut();
+                }, 3000);  
+                $('#reportRiderButton').hide();
+            } else {
+                alert(response.message);
+            }
+        },
+        error: function() {
+            alert('An error occurred. Please try again.');
+        }
+    });
+});
+
+$(document).ready(function () {
+    $("#rateRiderForm").submit(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: "POST",
+            url: "submit_rating.php",
+            data: $(this).serialize(),
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    $("#rateRiderModal").modal("hide");
+
+                    $("#rateRiderButton").hide();
+
+                    setTimeout(function () {
+                        $("#rateRiderMessage").text(response.message).fadeIn().delay(2000).fadeOut();
+                    }, 500);
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert("An error occurred while submitting the rating.");
+            }
+        });
+    });
+});
+
+$(document).ready(function () {
+    $("#rateSellerForm").submit(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: "POST",
+            url: "submit_seller_rating.php",
+            data: $(this).serialize(),
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    $("#rateSellerModal").modal("hide");
+
+                    $("#rateSellerButton").hide();
+
+                    setTimeout(function () {
+                        $("#rateSellerMessage").text(response.message).fadeIn().delay(2000).fadeOut();
+                    }, 500);
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function () {
+                alert("An error occurred while submitting the rating.");
+            }
+        });
+    });
+});
+
+
+
+
+</script>

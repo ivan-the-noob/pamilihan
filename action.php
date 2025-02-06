@@ -458,7 +458,9 @@ if(isset($_POST['checkout'])){
     for($i=1;$i<=$count;$i++){
         $totalAmount += $_SESSION['cart_p_qty'][$i] * $_SESSION['cart_p_current_price'][$i];
     }
-    
+
+  
+
     // Check If Billing and Shipping Address is existing.
     $billing_address = false;
     $shipping_address = false;
@@ -557,31 +559,62 @@ if(isset($_POST['checkout'])){
             ":dat"      =>  time(),
             ":stat"     =>  "Pending"
         ];
+        $res1 = $c->insertData($pdo, $insert1, $p1);
         // End
 
         // Add Payment For This Order
         // Begin
-        $res1 = $c->insertData($pdo, $insert1, $p1);
         $newTotal = $_POST['myTotal'];
-        $insert3 = "INSERT INTO tbl_purchase_payment (order_id, total_amount, transaction_id, date_and_time, transaction_status) VALUES (:o_id, :tot, :t_id, :dat, :stat)";
-        $p3 = [
-            ":o_id"     =>  $orderID,
-            ":tot"      =>  $newTotal,
-            ":t_id"     =>  $transactId,
-            ":dat"      =>  time(),
-            ":stat"     =>  "Pending"
-        ];
-    
-        $res3 = $c->insertData($pdo, $insert3, $p3);
+       // Capture POST values for payment method and related data
+       $paymentMethod = !empty($_POST['payment_method']) ? $_POST['payment_method'] : '';  // Correct handling of payment_method
+       $gcashName = !empty($_POST['gcash_name']) ? $_POST['gcash_name'] : '';  
+       $gcashReference = !empty($_POST['gcash_reference']) ? $_POST['gcash_reference'] : '';  
+   
+       // Handle file upload for GCash Image
+       $gcashImage = '';
+       if ($paymentMethod === 'gcash' && isset($_FILES['gcash_image']) && $_FILES['gcash_image']['error'] === UPLOAD_ERR_OK) {
+           $targetDir = "assets/img/gcash/";
+           $fileExtension = pathinfo($_FILES['gcash_image']['name'], PATHINFO_EXTENSION);
+           $gcashImage = uniqid("gcash_") . "." . $fileExtension; // Generate unique filename
+           $targetFile = $targetDir . $gcashImage;
+   
+           // Move the uploaded file to target directory
+           if (!move_uploaded_file($_FILES['gcash_image']['tmp_name'], $targetFile)) {
+               $gcashImage = ''; // Reset if upload fails
+           }
+       }
+   
+       // Insert into tbl_purchase_payment
+       $insert3 = "INSERT INTO tbl_purchase_payment (
+                       order_id, total_amount, transaction_id, date_and_time, transaction_status, 
+                       payment_method, gcash_name, gcash_image, gcash_reference) 
+                   VALUES (:o_id, :tot, :t_id, :dat, :stat, :pay_method, :gcash_name, :gcash_image, :gcash_ref)";
+   
+       $p3 = [
+           ":o_id"         => $orderID,
+           ":tot"          => $newTotal,
+           ":t_id"         => $transactId,
+           ":dat"          => time(),
+           ":stat"         => "Pending",
+           ":pay_method"   => $paymentMethod,
+           ":gcash_name"   => $gcashName,
+           ":gcash_image"  => $gcashImage,
+           ":gcash_ref"    => $gcashReference
+       ];
+   
+       $res3 = $c->insertData($pdo, $insert3, $p3);
+
         // End
+
         unset($_SESSION['cart_p_seller_id']);
         unset($_SESSION['cart_p_type']);
         unset($_SESSION['cart_p_size']);
         unset($_SESSION['cart_p_id']);
-	    unset($_SESSION['cart_p_qty']);
-	    unset($_SESSION['cart_p_current_price']);
-	    unset($_SESSION['cart_p_name']);
-	    unset($_SESSION['cart_p_featured_photo']);
+        unset($_SESSION['cart_p_qty']);
+        unset($_SESSION['cart_p_current_price']);
+        unset($_SESSION['cart_p_name']);
+        unset($_SESSION['cart_p_featured_photo']);
+        
         $success = "You have successfully ordered the product! If your order is in transit, we will notify you as soon as possible.\nThanks.";
     }else{
         if($billing_address == false){
@@ -628,6 +661,7 @@ if(isset($_POST['cancelMyOrder'])){
     $res1 = $c->fetchData($pdo, $upd, $p);
     echo "success";
 }
+
 
 // For Change Size In product-single
 if(isset($_POST['onChangeSize'])){
