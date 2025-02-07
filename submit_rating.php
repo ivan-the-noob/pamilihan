@@ -10,10 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $rating = $_POST['rider_rating'] ?? null;
     $feedback = $_POST['feedback'] ?? null;
 
-    if (!$order_id || !$customer_id || !$rider_id || !$rating || !$feedback) {
-        echo json_encode(["success" => false, "message" => "All fields are required."]);
-        exit();
-    }
+   
 
     try {
         // Insert the rating and feedback into tbl_ratings

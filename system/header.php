@@ -186,6 +186,11 @@ if(!isset($_SESSION['user'])) {
                             <i class="fa fa-sticky-note"></i> <span>Order Management</span>
                         </a>
                     </li>
+					<li class="treeview <?php if( ($cur_page == 'return_items.php') ) {echo 'active';} ?>">
+                        <a href="return_items.php">
+						<i class="fa fa-undo"></i></i> <span>Return Items</span>
+                        </a>
+                    </li>
 					<!-- <li class="treeview <?php if( ($cur_page == 'customer.php') || ($cur_page == 'customer-add.php') || ($cur_page == 'customer-edit.php') ) {echo 'active';} ?>">
 			          <a href="customer.php">
 			            <i class="fa fa-user-plus"></i> <span>Manage Customers</span>

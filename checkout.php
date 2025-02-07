@@ -200,25 +200,26 @@ if(isset($_SESSION['cart_p_id'])){
 							<div class="col-md-12">
 								<div class="form-group">
 									<label for="">Full Name</label>
-									<input type="text" value="<?= $B_fullName; ?>" style="background-color: #E8E8E8 !important;" readonly class="form-control">
+									<input type="text" name="full_name" value="<?= $B_fullName; ?>" style="background-color: #E8E8E8 !important;" class="form-control">
 								</div>
 								<div class="form-group">
-									<label for="">Phone No. </label>
-									<input type="text" value="<?= $B_phone; ?>" style="background-color: #E8E8E8 !important;" readonly class="form-control">
+									<label for="">Phone No.</label>
+									<input type="text" name="phone_no" value="<?= $B_phone; ?>" style="background-color: #E8E8E8 !important;" class="form-control">
 								</div>
 								<div class="form-group">
 									<label for="">Country</label>
-									<input type="text" value="Philippines" style="background-color: #E8E8E8 !important;" readonly class="form-control">
+									<input type="text" name="country" value="Philippines" style="background-color: #E8E8E8 !important;" class="form-control">
 								</div>
 								<div class="form-group">
 									<label for="">Address</label>
-									<textarea row="3" style="background-color: #E8E8E8 !important;" readonly class="form-control"><?= $B_address; ?></textarea>
+									<textarea rows="3" name="address" style="background-color: #E8E8E8 !important;" class="form-control"><?= $B_address; ?></textarea>
 								</div>
 								<div class="form-group">
 									<label for="">City</label>
-									<input type="text" value="<?= $B_city; ?>" style="background-color: #E8E8E8 !important;" readonly class="form-control">
+									<input type="text" name="city" value="<?= $B_city; ?>" style="background-color: #E8E8E8 !important;" class="form-control">
 								</div>
 							</div>
+
 						</div>
 					</div>
 					<div class="col-md-6">
@@ -374,9 +375,14 @@ if(isset($_SESSION['cart_p_id'])){
             formData.append('myId', myId);
             formData.append('myTotal', myTotal);
             formData.append('checkout', true);
-            formData.append('payment_method', $("#payment-method").val());  // This matches the name attribute in HTML
-            formData.append('gcash_name', $("#gcashName").val());
-            formData.append('gcash_reference', $("#gcashReference").val());
+            formData.append('payment_method', $("#payment-method").val());  // Payment method
+            formData.append('gcash_name', $("#gcashName").val());  // Gcash Name
+            formData.append('gcash_reference', $("#gcashReference").val());  // Gcash Reference
+            formData.append('full_name', $("input[name='full_name']").val()); // Full Name
+            formData.append('phone_no', $("input[name='phone_no']").val()); // Phone Number
+            formData.append('country', $("input[name='country']").val()); // Country
+            formData.append('address', $("textarea[name='address']").val()); // Address
+            formData.append('city', $("input[name='city']").val()); // City
 
             // Handle file input for Gcash image
             var gcashImage = $("#gcashImage")[0].files[0];
@@ -421,27 +427,22 @@ if(isset($_SESSION['cart_p_id'])){
     });
 </script>
 
-<!-- JavaScript to handle the "Place an Order" button -->
 <script>
-    // Show the error message initially since no selection is made
     document.getElementById('payment-error').style.display = 'block';
-
-    // Disable the "Place an order" button initially
     var placeOrderBtn = document.getElementById('place-order-btn');
     placeOrderBtn.disabled = true;
 
     document.getElementById('payment-method').addEventListener('change', function() {
         var paymentMethod = this.value;
 
-        // Hide the error message when a valid payment method is selected
         if (paymentMethod) {
             document.getElementById('payment-error').style.display = 'none';
-            placeOrderBtn.disabled = false; // Enable the "Place an order" button
-            placeOrderBtn.textContent = 'Place an order'; // Reset the text
+            placeOrderBtn.disabled = false; 
+            placeOrderBtn.textContent = 'Place an order';
         } else {
             document.getElementById('payment-error').style.display = 'block';
-            placeOrderBtn.disabled = true; // Disable the "Place an order" button
-            placeOrderBtn.textContent = 'Select payment method first'; // Update the text
+            placeOrderBtn.disabled = true; 
+            placeOrderBtn.textContent = 'Select payment method first'; 
         }
     });
 </script>

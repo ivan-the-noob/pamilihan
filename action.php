@@ -566,9 +566,15 @@ if(isset($_POST['checkout'])){
         // Begin
         $newTotal = $_POST['myTotal'];
        // Capture POST values for payment method and related data
-       $paymentMethod = !empty($_POST['payment_method']) ? $_POST['payment_method'] : '';  // Correct handling of payment_method
+       $paymentMethod = !empty($_POST['payment_method']) ? $_POST['payment_method'] : '';  
        $gcashName = !empty($_POST['gcash_name']) ? $_POST['gcash_name'] : '';  
        $gcashReference = !empty($_POST['gcash_reference']) ? $_POST['gcash_reference'] : '';  
+       $fullName = !empty($_POST['full_name']) ? $_POST['full_name'] : '';  
+       $phoneNo = !empty($_POST['phone_no']) ? $_POST['phone_no'] : '';  
+       $country = !empty($_POST['country']) ? $_POST['country'] : '';  
+       $address = !empty($_POST['address']) ? $_POST['address'] : '';  
+       $city = !empty($_POST['city']) ? $_POST['city'] : '';  
+       
    
        // Handle file upload for GCash Image
        $gcashImage = '';
@@ -584,26 +590,30 @@ if(isset($_POST['checkout'])){
            }
        }
    
-       // Insert into tbl_purchase_payment
        $insert3 = "INSERT INTO tbl_purchase_payment (
-                       order_id, total_amount, transaction_id, date_and_time, transaction_status, 
-                       payment_method, gcash_name, gcash_image, gcash_reference) 
-                   VALUES (:o_id, :tot, :t_id, :dat, :stat, :pay_method, :gcash_name, :gcash_image, :gcash_ref)";
-   
-       $p3 = [
-           ":o_id"         => $orderID,
-           ":tot"          => $newTotal,
-           ":t_id"         => $transactId,
-           ":dat"          => time(),
-           ":stat"         => "Pending",
-           ":pay_method"   => $paymentMethod,
-           ":gcash_name"   => $gcashName,
-           ":gcash_image"  => $gcashImage,
-           ":gcash_ref"    => $gcashReference
-       ];
-   
-       $res3 = $c->insertData($pdo, $insert3, $p3);
+        order_id, total_amount, transaction_id, date_and_time, transaction_status, 
+        payment_method, gcash_name, gcash_image, gcash_reference, full_name, phone_no, country, address, city
+        ) 
+        VALUES (:o_id, :tot, :t_id, :dat, :stat, :pay_method, :gcash_name, :gcash_image, :gcash_ref, :full_name, :phone_no, :country, :address, :city)";
 
+        $p3 = [
+        ":o_id"         => $orderID,
+        ":tot"          => $newTotal,
+        ":t_id"         => $transactId,
+        ":dat"          => time(),
+        ":stat"         => "Pending",  
+        ":pay_method"   => $paymentMethod,
+        ":gcash_name"   => $gcashName,
+        ":gcash_image"  => $gcashImage,  
+        ":gcash_ref"    => $gcashReference,
+        ":full_name"    => $fullName, 
+        ":phone_no"     => $phoneNo,  
+        ":country"      => $country,  
+        ":address"      => $address,  
+        ":city"         => $city      
+        ];
+
+        $res3 = $c->insertData($pdo, $insert3, $p3);
         // End
 
         unset($_SESSION['cart_p_seller_id']);

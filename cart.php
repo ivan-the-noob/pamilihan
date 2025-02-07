@@ -215,7 +215,17 @@ if(isset($_POST['form1'])) {
     </tr>
     <tr>
         <td colspan="7">
-            <button type="submit" class="btn btn-primary btn-block py-3 w-25 text-white d-flex justify-content-center mx-auto">Checkout Selected Items</button>
+        <div id="modalButtonContainer" style="display: none;">
+    <button type="button" class="btn btn-danger btn-block py-3 w-25 text-white d-flex justify-content-center mx-auto" data-toggle="modal" data-target="#maxWeightModal">
+        20Kg Max Per CheckOut
+    </button>
+    </div>
+
+    <button id="checkoutBtn" type="submit" class="btn btn-primary btn-block py-3 w-25 text-white d-flex justify-content-center mx-auto">
+        Checkout Selected Items
+    </button>
+
+
         </td>
     </tr>
     <?php
@@ -224,38 +234,64 @@ if(isset($_POST['form1'])) {
 </tbody>
 
 <script>
-    // JavaScript to calculate the total amount for selected items
-document.addEventListener("DOMContentLoaded", function () {
-    const checkboxes = document.querySelectorAll('.cart-item-checkbox');
-    const totalAmountSpan = document.querySelector('.forTotalAmount');
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll('.cart-item-checkbox');
+        const totalAmountSpan = document.querySelector('.forTotalAmount');
+        const checkoutButton = document.getElementById('checkoutBtn'); 
+        const modalButtonContainer = document.getElementById('modalButtonContainer'); 
 
-    function updateTotalAmount() {
-        let total = 0;
+        function parseWeight(sizeText) {
+            let weight = 0;
+            let match = sizeText.match(/(\d+)\/?(\d*)kg/i);
 
-        checkboxes.forEach(function (checkbox, index) {
-            if (checkbox.checked) {
-                // Get the price and quantity for selected items
-                const price = parseFloat(document.querySelectorAll('.price_per_product')[index].textContent.replace(/[^0-9.-]+/g, ""));
-                const quantity = parseInt(document.querySelectorAll('.quantity1')[index].value);
-
-                total += price * quantity;
+            if (match) {
+                let numerator = parseInt(match[1]);
+                let denominator = match[2] ? parseInt(match[2]) : 1;
+                weight = numerator / denominator;
             }
+            return weight;
+        }
+
+        function updateTotalAmount() {
+            let total = 0;
+            let totalWeight = 0;
+
+            checkboxes.forEach(function (checkbox, index) {
+                if (checkbox.checked) {
+                    const price = parseFloat(document.querySelectorAll('.price_per_product')[index].textContent.replace(/[^0-9.-]+/g, ""));
+                    const quantity = parseInt(document.querySelectorAll('.quantity1')[index].value);
+                    const sizeText = document.querySelectorAll('.product-name p')[index].textContent.trim(); 
+
+                    let weightPerUnit = parseWeight(sizeText);
+                    totalWeight += (weightPerUnit * quantity);
+                    
+                    total += price * quantity;
+                }
+            });
+
+            totalAmountSpan.textContent = total.toFixed(2);
+            console.log("Total Weight: " + totalWeight + "kg");
+
+            if (totalWeight < 20) {
+                checkoutButton.style.visibility = "visible"; 
+                modalButtonContainer.style.visibility = "hidden"; 
+            } else {
+                checkoutButton.style.visibility = "hidden";
+                modalButtonContainer.style.display = "block";
+                modalButtonContainer.style.visibility = "visible"; 
+                
+            }
+        }
+
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', updateTotalAmount);
         });
 
-        // Update the total amount displayed
-        totalAmountSpan.textContent = total.toFixed(2);
-    }
-
-    // Attach event listener to checkboxes
-    checkboxes.forEach(function (checkbox) {
-        checkbox.addEventListener('change', updateTotalAmount);
+        updateTotalAmount();
     });
-
-    // Initial calculation
-    updateTotalAmount();
-});
-
 </script>
+
+
 
 
 </form>

@@ -183,27 +183,39 @@ if($success_message != '') {
                         if($res){
                             $no1 = 1;
                             foreach($res as $row){
+                                $orderID = $row['order_id'];
                                 ?>
                                 <tr>
                                     <td><?= $no1++; ?></td>
                                     <td><?= $row['order_id']; ?></td>
                                     <td>
-                                        <?php
-                                        $sql1 = "SELECT s.* FROM tbl_user u JOIN tbl_shipping_address s ON u.id=s.user_id  WHERE u.id=:customer_id";
-                                        $p1 = [
-                                            ":customer_id"      =>  $row['customer_id']
-                                        ];
+                                    <?php
+                                    $orderID = isset($orderID) ? $orderID : 0;  
+                                    if ($orderID) {
+                                        $sql1 = "SELECT p.full_name, p.phone_no, p.country, p.address, p.city 
+                                                FROM tbl_purchase_payment p 
+                                                WHERE p.order_id = :order_id";
+
+                                        $p1 = [":order_id" => $orderID];
                                         $res1 = $c->fetchData($pdo, $sql1, $p1);
-                                        foreach($res1 as $row1){
+
+                                        foreach ($res1 as $row1) {
                                             ?>
                                             <ul>
-                                                <li><b>Name: </b><span><?= $row1['full_name'];?></span></li>
-                                                <li><b>Phone: </b><span><?= $row1['phone'];?></span></li>
-                                                <li><b>Address: </b><span><?= $row1['address']; ?>, <?= $row1['city'];?></span></li>
+                                                <li><b>Name: </b><span><?= htmlspecialchars($row1['full_name']); ?></span></li>
+                                                <li><b>Phone: </b><span><?= htmlspecialchars($row1['phone_no']); ?></span></li>
+                                                <li><b>Country: </b><span><?= htmlspecialchars($row1['country']); ?></span></li>
+                                                <li><b>Address: </b><span><?= htmlspecialchars($row1['address']); ?>, <?= htmlspecialchars($row1['city']); ?></span></li>
                                             </ul>
                                             <?php
                                         }
-                                        ?>
+                                    } else {
+                                        echo "No order found.";
+                                    }
+                                    ?>
+
+
+
                                     </td>
                                         <?php
                                             $order_id = $row['order_id'];
@@ -247,10 +259,12 @@ if($success_message != '') {
                                     $gcash_name = $payment ? htmlspecialchars($payment['gcash_name']) : 'N/A';
                                     $gcash_image = $payment ? htmlspecialchars($payment['gcash_image']) : 'N/A';
                                     $gcash_reference = $payment ? htmlspecialchars($payment['gcash_reference']) : 'N/A';
-                                    $cancel_reason = $payment ? htmlspecialchars($payment['cancel_reason']) : 'N/A';
+                                    $cancel_reason = htmlspecialchars($payment['cancel_reason'] ?? '');
                                     ?><br>
                                     <?= $payment_method; ?><br>
                                     <?= $gcash_name; ?><br>
+                                    <?= $gcash_reference; ?><br>
+                                    
                                     
                                     <?php if ($gcash_image != 'N/A' && $payment_method != 'cod') : ?>
                                         <a href="#" data-toggle="modal" data-target="#gcashImageModal">

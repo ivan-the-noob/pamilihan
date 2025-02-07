@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':order_id', $orderId, PDO::PARAM_STR); 
 
         if ($stmt->execute()) {
-           header('Location:settings.phpt=myOrder');
+           header('Location:settings.php');
            exit();
         } else {
             echo "error";
