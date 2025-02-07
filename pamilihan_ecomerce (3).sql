@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 04, 2025 at 07:18 AM
+-- Generation Time: Feb 07, 2025 at 09:18 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -1004,9 +1004,9 @@ INSERT INTO `tbl_product` (`p_id`, `u_id`, `p_name`, `p_retail`, `p_wholesale`, 
 (3, 3, 'Pork Chop', '150', '125', 0, 0, 20, 12, '', '', 0, 'product-featured-3.jpg', '', '<p>1kg</p>', '', '', '', 37, 1, 1, 0),
 (4, 3, 'Guava', '150', '125', 0, 0, 20, 12, '', '', 0, 'product-featured-4.jpg', '', '<p>1kg</p>', '', '', '', 154, 1, 1, 0),
 (13, 13, 'Fresh Beef Brisket', '249', '', 0, 0, 20, 12, '', '', 0, 'product-featured-13.jpg', '', '', '', '', '', 228, 1, 1, 0),
-(14, 14, 'Manok', '250', '', 0, 0, 5, 20, '', '', 0, 'product-featured-14.jpg', '', '<p>Fresh Meat</p>', '', '', '', 4, 1, 1, 0),
-(15, 14, 'Bawang', '120', '', 0, 0, 5, 20, '', '', 0, 'product-featured-15.jpg', '', '<p>Fresh Vegetables</p>', '', '', '', 5, 1, 1, 0),
-(16, 15, 'Baboy', '300', '', 0, 0, 5, 20, '', '', 0, 'product-featured-16.jpg', '', '<p>Fresh Pork</p>', '', '', '', 6, 1, 1, 0),
+(14, 14, 'Manok', '250', '', 0, 0, 5, 20, '', '', 0, 'product-featured-14.jpg', '', '<p>Fresh Meat</p>', '', '', '', 13, 1, 1, 0),
+(15, 14, 'Bawang', '120', '', 0, 0, 5, 20, '', '', 0, 'product-featured-15.jpg', '', '<p>Fresh Vegetables</p>', '', '', '', 12, 1, 1, 0),
+(16, 3, 'Baboy', '300', '', 0, 0, 5, 20, '', '', 0, 'product-featured-16.jpg', '', '<p>Fresh Pork</p>', '', '', '', 113, 1, 1, 0),
 (19, 3, 'TEST TEST TEST', '200', '', 0, 0, 312, 123, '', '', 0, 'product-featured-19.jpg', '', '<p>DASDSADAS</p>', '', '', '', 0, 1, 1, 0);
 
 -- --------------------------------------------------------
@@ -1147,31 +1147,25 @@ CREATE TABLE `tbl_purchase_item` (
 --
 
 INSERT INTO `tbl_purchase_item` (`id`, `type_item`, `order_id`, `seller_id`, `product_id`, `size_id`, `product_price`, `product_qty`, `status`) VALUES
-(1, 'product', 'OW62PFLFR54', '3', '13', '1', '31', '4', 'Completed'),
-(2, 'product', 'OMSGXZV3RMC', '3', '3', '2', '150', '2', 'Completed'),
-(3, 'product', 'OMSGXZV3RMC', '3', '4', '4', '75', '1', 'Completed'),
-(4, 'product', 'OMSGXZV3RMC', '3', '13', '2', '249', '1', 'Completed'),
-(5, 'product', 'OR0OWH76MN9', '3', '3', '0', '150', '1', 'Pending'),
-(6, 'product', 'OVLPJCA8NJS', '3', '3', '0', '150', '1', 'Pending'),
-(7, 'product', 'OLI72VIQ89B', '3', '3', '0', '150', '1', 'Pending'),
-(8, 'product', 'OHSTK07P7FH', '3', '4', '2', '150', '1', 'Pending'),
-(9, 'product', 'OE56AKRQMBI', '3', '3', '0', '150', '1', 'Pending'),
-(10, 'product', 'OG5UG5SES0J', '3', '13', '2', '249', '1', 'Pending'),
-(11, 'product', 'OGYIOX6QLD1', '3', '4', '2', '150', '1', 'Pending'),
-(12, 'product', 'O6FYTPADBAN', '3', '13', '2', '249', '1', 'Pending'),
-(13, 'product', 'O6FYTPADBAN', '3', '4', '2', '150', '1', 'Pending'),
-(14, 'product', 'O7LFWKT3YPO', '3', '3', '0', '150', '1', 'Pending'),
-(15, 'product', 'OSO6C1NE9ZF', '3', '3', '0', '150', '1', 'Pending'),
-(16, 'product', 'O5IPAEV565H', '3', '3', '0', '150', '2', 'Pending'),
-(17, 'product', 'OR6MMDLRC9J', '3', '4', '2', '150', '1', 'Pending'),
-(18, 'product', 'OR6MMDLRC9J', '13', '13', '2', '249', '1', 'Pending'),
-(19, 'product', 'OKUK0XK6EJK', '13', '13', '2', '249', '1', 'Pending'),
-(20, 'product', 'OKUK0XK6EJK', '3', '3', '0', '150', '1', 'Pending'),
-(21, 'product', 'OUC2XWFQZCM', '14', '14', '2', '250', '3', 'Pending'),
-(22, 'product', 'OUC2XWFQZCM', '15', '16', '2', '300', '2', 'Pending'),
-(23, 'product', 'O7M1TW1QJWP', '14', '14', '2', '250', '1', 'Pending'),
-(24, 'product', 'OI35I1FV6EG', '3', '15', '2', '120', '1', 'Pending'),
-(25, 'product', 'OBYKA9MH3R6', '3', '18', '2', '100', '1', 'Pending');
+(48, 'product', 'OOKPGO7GJN1', '3', '16', '2', '300', '1', 'Pending'),
+(49, 'product', 'ONGPGMJVGAW', '3', '16', '1', '38', '1', 'Pending'),
+(50, 'product', 'O99R9ETNN3I', '3', '16', '1', '38', '1', 'Pending'),
+(51, 'product', 'OS1NY55WXAR', '3', '16', '1', '38', '1', 'Pending'),
+(52, 'product', 'OS1NY55WXAR', '3', '16', '2', '300', '1', 'Pending'),
+(53, 'product', 'O2XA6JMY434', '3', '16', '2', '300', '1', 'Pending'),
+(54, 'product', 'O7IWK2DW9I9', '3', '16', '2', '300', '1', 'Pending'),
+(55, 'product', 'OOYKG2FAE9N', '3', '16', '2', '300', '1', 'Cancelled'),
+(56, 'product', 'OV30ENXHWQ7', '3', '16', '2', '300', '1', 'Pending'),
+(57, 'product', 'OLM3XZ0MT1O', '3', '16', '2', '300', '1', 'Pending'),
+(58, 'product', 'OP0D1LARJDD', '14', '14', '2', '250', '18', 'Pending'),
+(59, 'product', 'OP0D1LARJDD', '14', '14', '1', '31', '3', 'Pending'),
+(60, 'product', 'OP0D1LARJDD', '3', '16', '2', '300', '1', 'Pending'),
+(61, 'product', 'OV4ANVP68HB', '3', '16', '2', '300', '1', 'Pending'),
+(62, 'product', 'OBGJ67OLEKQ', '3', '16', '2', '300', '1', 'Pending'),
+(63, 'product', 'OIURGZKJETD', '3', '16', '2', '300', '1', 'Pending'),
+(64, 'product', 'O79I1DO5Y3L', '3', '16', '2', '300', '1', 'Pending'),
+(65, 'product', 'ONYJJR5F1OY', '3', '16', '2', '300', '1', 'Pending'),
+(66, 'product', 'OULJ3JUDG49', '3', '16', '2', '300', '1', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -1188,33 +1182,21 @@ CREATE TABLE `tbl_purchase_order` (
   `date_and_time` varchar(125) NOT NULL,
   `status` varchar(20) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `estimated_time` int(3) DEFAULT NULL
+  `estimated_time` int(3) DEFAULT NULL,
+  `report_seller_status` tinyint(1) DEFAULT 0,
+  `report_rider_status` tinyint(1) DEFAULT 0,
+  `rate_rider_status` tinyint(1) DEFAULT 0,
+  `rate_seller_status` tinyint(1) DEFAULT 0,
+  `return_status` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_purchase_order`
 --
 
-INSERT INTO `tbl_purchase_order` (`id`, `order_id`, `customer_id`, `rider_id`, `remarks`, `date_and_time`, `status`, `created_at`, `estimated_time`) VALUES
-(1, 'OW62PFLFR54', 5, '6', 'Completed', '1737103020', 'Completed', '2025-01-27 05:11:28', NULL),
-(2, 'OMSGXZV3RMC', 5, '6', 'Completed', '1737269465', 'Completed', '2025-01-27 05:11:28', NULL),
-(3, 'OR0OWH76MN9', 5, '', 'Pending', '1737915466', 'Pending', '2025-01-27 05:11:28', NULL),
-(4, 'OVLPJCA8NJS', 5, '', 'Pending', '1737915536', 'Pending', '2025-01-27 05:11:28', NULL),
-(5, 'OLI72VIQ89B', 5, '', 'Pending', '1737915933', 'Pending', '2025-01-27 05:11:28', NULL),
-(6, 'OHSTK07P7FH', 5, '', 'Pending', '1737916006', 'Pending', '2025-01-27 05:11:28', NULL),
-(7, 'OE56AKRQMBI', 5, '', 'Pending', '1737916066', 'Pending', '2025-01-27 05:11:28', NULL),
-(8, 'OG5UG5SES0J', 5, '', 'Pending', '1737916170', 'Pending', '2025-01-27 05:11:28', NULL),
-(9, 'OGYIOX6QLD1', 5, '6', 'Transferred to Rider', '1737917162', 'Rider', '2025-01-27 05:11:28', NULL),
-(10, 'O6FYTPADBAN', 5, '', 'Pending', '1737954626', 'Pending', '2025-01-27 05:11:28', NULL),
-(11, 'O7LFWKT3YPO', 5, '', 'Pending', '1737954765', 'Pending', '2025-01-27 05:12:45', NULL),
-(12, 'OSO6C1NE9ZF', 5, '2', 'On the way for delivery', '1737954978', 'Delivering Items', '2025-02-04 03:50:02', 20),
-(13, 'O5IPAEV565H', 5, '2', 'On the way for delivery', '1737955013', 'Delivering Items', '2025-02-04 02:24:23', NULL),
-(14, 'OR6MMDLRC9J', 5, '2', 'On the way for delivery', '1737955975', 'Delivering Items', '2025-02-04 03:18:48', NULL),
-(15, 'OKUK0XK6EJK', 5, '6', 'Transferred to Rider', '1737960086', 'Rider', '2025-01-27 14:30:59', NULL),
-(16, 'OUC2XWFQZCM', 5, '17', 'Completed', '1738050087', 'Completed', '2025-01-28 07:46:48', NULL),
-(17, 'O7M1TW1QJWP', 5, '2', 'Completed', '1738050936', 'Completed', '2025-02-03 18:38:25', NULL),
-(18, 'OI35I1FV6EG', 5, '', 'Pending', '1738052610', 'Pending', '2025-02-03 18:50:23', NULL),
-(19, 'OBYKA9MH3R6', 5, '', 'Pending', '1738607561', 'Pending', '2025-02-03 18:32:41', NULL);
+INSERT INTO `tbl_purchase_order` (`id`, `order_id`, `customer_id`, `rider_id`, `remarks`, `date_and_time`, `status`, `created_at`, `estimated_time`, `report_seller_status`, `report_rider_status`, `rate_rider_status`, `rate_seller_status`, `return_status`) VALUES
+(59, 'OIURGZKJETD', 5, '2', 'Completed', '1738912637', 'Completed', '2025-02-07 08:05:40', 30, 0, 0, 1, 0, 1),
+(62, 'OULJ3JUDG49', 5, '', 'Pending', '1738915619', 'Pending', '2025-02-07 08:06:59', NULL, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -1228,34 +1210,28 @@ CREATE TABLE `tbl_purchase_payment` (
   `total_amount` varchar(20) NOT NULL,
   `transaction_id` varchar(20) NOT NULL,
   `date_and_time` varchar(50) NOT NULL,
-  `transaction_status` varchar(20) NOT NULL
+  `transaction_status` varchar(20) NOT NULL,
+  `payment_method` varchar(50) NOT NULL DEFAULT 'cod',
+  `gcash_name` varchar(255) DEFAULT NULL,
+  `gcash_image` varchar(255) DEFAULT NULL,
+  `gcash_reference` varchar(50) DEFAULT NULL,
+  `cancel_reason` text DEFAULT NULL,
+  `full_name` varchar(255) NOT NULL,
+  `phone_no` varchar(20) NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `address` text NOT NULL,
+  `city` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `tbl_purchase_payment`
 --
 
-INSERT INTO `tbl_purchase_payment` (`id`, `order_id`, `total_amount`, `transaction_id`, `date_and_time`, `transaction_status`) VALUES
-(1, 'OW62PFLFR54', '274', 'T9761926589', '1737103020', 'Completed'),
-(2, 'OMSGXZV3RMC', '774', 'T2482746774', '1737269465', 'Completed'),
-(3, 'OR0OWH76MN9', '300', 'T3401086932', '1737915466', 'Pending'),
-(4, 'OVLPJCA8NJS', '300', 'T0810711019', '1737915536', 'Pending'),
-(5, 'OLI72VIQ89B', '300', 'T6274966663', '1737915933', 'Pending'),
-(6, 'OHSTK07P7FH', '300', 'T5336070054', '1737916006', 'Pending'),
-(7, 'OE56AKRQMBI', '300', 'T7273735181', '1737916066', 'Pending'),
-(8, 'OG5UG5SES0J', '399', 'T1690073372', '1737916170', 'Pending'),
-(9, 'OGYIOX6QLD1', '300', 'T2918891245', '1737917162', 'Pending'),
-(10, 'O6FYTPADBAN', '549', 'T7818900343', '1737954626', 'Pending'),
-(11, 'O7LFWKT3YPO', '300', 'T5752832293', '1737954765', 'Pending'),
-(12, 'OSO6C1NE9ZF', '300', 'T4881307362', '1737954978', 'Pending'),
-(13, 'O5IPAEV565H', '450', 'T0184878585', '1737955013', 'Pending'),
-(14, 'OR6MMDLRC9J', '549', 'T0666178254', '1737955975', 'Pending'),
-(15, 'OKUK0XK6EJK', '549', 'T1425034970', '1737960086', 'Pending'),
-(16, 'OUC2XWFQZCM', '1500', 'T4404148650', '1738050087', 'Completed'),
-(17, 'O7M1TW1QJWP', '400', 'T0991917324', '1738050936', 'Completed'),
-(18, 'OI35I1FV6EG', '270', 'T5288741038', '1738052610', 'Completed'),
-(19, 'OBYKA9MH3R6', '250', 'T1506102901', '1738607561', 'Completed'),
-(20, 'OBYKA9MH3R6', '300', 'T1506102901', '1738607561', 'Completed');
+INSERT INTO `tbl_purchase_payment` (`id`, `order_id`, `total_amount`, `transaction_id`, `date_and_time`, `transaction_status`, `payment_method`, `gcash_name`, `gcash_image`, `gcash_reference`, `cancel_reason`, `full_name`, `phone_no`, `country`, `address`, `city`) VALUES
+(59, 'OIURGZKJETD', '100', 'T8732743610', '1738912637', 'Pending', 'cod', '', '', '', NULL, 'Example Customer', '0987654321', 'Philippines', 'Cavite-Laguna Expressway, Buenavista II, General Trias, Cavite, Calabarzon, 4107, Philippines', 'Brgy. Sta Rosa 1'),
+(60, 'O79I1DO5Y3L', '450', 'T1909641948', '1738913287', 'Pending', 'gcash', 'Ivan', 'gcash_67a5b60708995.PNG', '312312321', NULL, 'Example Customer', '0987654321', 'Philippines', 'Cavite-Laguna Expressway, Buenavista II, General Trias, Cavite, Calabarzon, 4107, Philippines', 'Brgy. Sta Rosa 1'),
+(61, 'ONYJJR5F1OY', '450', 'T2631087609', '1738914987', 'Pending', 'cod', '', '', '', 'change of mind', 'Example Customer', '0987654321', 'Philippines', 'Cavite-Laguna Expressway, Buenavista II, General Trias, Cavite, Calabarzon, 4107, Philippines', 'Brgy. Sta Rosa 1'),
+(62, 'OULJ3JUDG49', '450', 'T4141958355', '1738915619', 'Pending', 'cod', '', '', '', NULL, 'TEST TEST ', '09876543211', 'PhilippinesS', 'Cavite-Laguna Expressway, Buenavista II, General Trias, Cavite, Calabarzon, 4107, Philippiness', 'Brgy. Sta Rosa 1');
 
 -- --------------------------------------------------------
 
@@ -1270,6 +1246,35 @@ CREATE TABLE `tbl_rating` (
   `comment` text NOT NULL,
   `rating` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_ratings`
+--
+
+CREATE TABLE `tbl_ratings` (
+  `id` int(11) NOT NULL,
+  `order_id` varchar(255) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `rider_id` int(11) NOT NULL,
+  `rating` int(11) NOT NULL,
+  `feedback` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_ratings`
+--
+
+INSERT INTO `tbl_ratings` (`id`, `order_id`, `customer_id`, `rider_id`, `rating`, `feedback`, `created_at`) VALUES
+(1, '0', 5, 2, 3, 'hey bro!', '2025-02-06 08:58:10'),
+(2, 'ONAWSIXV2DF', 5, 2, 2, 'dsadas', '2025-02-06 09:00:34'),
+(3, 'ONAWSIXV2DF', 5, 2, 3, 'sADSA', '2025-02-06 09:30:57'),
+(4, 'ONAWSIXV2DF', 5, 2, 3, 'Hello!', '2025-02-06 09:35:06'),
+(5, 'O79I1DO5Y3L', 5, 0, 3, 'dasdasdas', '2025-02-07 07:39:07'),
+(6, 'O79I1DO5Y3L', 5, 0, 3, 'dasdasdas', '2025-02-07 07:41:00'),
+(7, 'OIURGZKJETD', 2, 2, 2, 'dasdasdsa', '2025-02-07 07:54:31');
 
 -- --------------------------------------------------------
 
@@ -1342,6 +1347,55 @@ INSERT INTO `tbl_recipe_product` (`id`, `u_id`, `r_id`, `p_id`, `s_id`, `quantit
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `tbl_report`
+--
+
+CREATE TABLE `tbl_report` (
+  `id` int(11) NOT NULL,
+  `order_id` varchar(255) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `rider_id` int(11) NOT NULL,
+  `seller_id` int(11) NOT NULL,
+  `report_reason` text NOT NULL,
+  `report_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `report_to` enum('seller','rider') NOT NULL DEFAULT 'seller'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_report`
+--
+
+INSERT INTO `tbl_report` (`id`, `order_id`, `customer_id`, `rider_id`, `seller_id`, `report_reason`, `report_date`, `report_to`) VALUES
+(31, 'OIURGZKJETD', 5, 2, 3, 'asddsadsa', '2025-02-07 07:26:48', 'rider'),
+(32, 'OIURGZKJETD', 5, 2, 3, 'dasdsadsaasd', '2025-02-07 07:26:52', 'seller');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_return_items`
+--
+
+CREATE TABLE `tbl_return_items` (
+  `id` int(11) NOT NULL,
+  `order_id` varchar(255) NOT NULL,
+  `reason` text NOT NULL,
+  `gcash_name` varchar(255) NOT NULL,
+  `gcash_number` varchar(20) NOT NULL,
+  `gcash_image` varchar(255) DEFAULT NULL,
+  `date_created` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_return_items`
+--
+
+INSERT INTO `tbl_return_items` (`id`, `order_id`, `reason`, `gcash_name`, `gcash_number`, `gcash_image`, `date_created`) VALUES
+(9, 'ONYJJR5F1OY', 'bulok', 'Ivan A.', '09957939703', 'image_1738915374_4880.png', '2025-02-07 08:02:54'),
+(10, 'OIURGZKJETD', 'dasdas', 'Ivan A.', '09957939703', 'image_1738915540_4199.png', '2025-02-07 08:05:40');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `tbl_rider`
 --
 
@@ -1369,7 +1423,7 @@ INSERT INTO `tbl_rider` (`id`, `user_id`, `license_number`, `vehicle_type`, `veh
 (16, '51', '454323', 'Motorcycle', 'TJW153', 'AWTS12', '1736682857', 'Verified'),
 (17, '2', '3059837', 'FJLSKD', 'asas', '45345', '1736733440', 'Verified'),
 (18, '6', '58394', 'asdasda', 'vhs10', '014583', '1736914221', 'Verified'),
-(19, '17', '12173687614', 'Motorcycle', 'Yamaha Sniper', 'DAR 1234', 'bbe7be73e281ff52d6935b147e8ce48a', 'Verified');
+(19, '3', '12173687614', 'Motorcycle', 'Yamaha Sniper', 'DAR 1234', 'bbe7be73e281ff52d6935b147e8ce48a', 'Verified');
 
 -- --------------------------------------------------------
 
@@ -1399,6 +1453,33 @@ INSERT INTO `tbl_seller` (`id`, `user_id`, `business_title`, `business_name`, `b
 (7, 13, 'dasdas', 'dasdas', 'Open-Air Business Venue', '312312312', 'Verified'),
 (8, 14, 'Aye', 'Aling Aye Store', 'Open-Air Business Venue', '123-123-123-00000', 'Verified'),
 (9, 15, 'Daryll', 'Daryll Store', 'Open-Air Business Venue', '123-123-123-11111', 'Verified');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tbl_seller_ratings`
+--
+
+CREATE TABLE `tbl_seller_ratings` (
+  `id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `customer_id` int(11) NOT NULL,
+  `seller_id` int(11) NOT NULL,
+  `rating` int(11) NOT NULL CHECK (`rating` between 1 and 5),
+  `feedback` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_seller_ratings`
+--
+
+INSERT INTO `tbl_seller_ratings` (`id`, `order_id`, `customer_id`, `seller_id`, `rating`, `feedback`, `created_at`) VALUES
+(1, 0, 5, 3, 3, 'seller is good!', '2025-02-06 09:46:03'),
+(2, 0, 5, 3, 2, 'dasdasdas', '2025-02-06 09:48:31'),
+(3, 0, 5, 3, 2, 'dasdsa', '2025-02-06 09:49:15'),
+(4, 0, 5, 3, 2, 'dsadsa', '2025-02-07 07:33:01'),
+(5, 0, 5, 3, 3, 'dsadas', '2025-02-07 07:54:36');
 
 -- --------------------------------------------------------
 
@@ -1793,7 +1874,7 @@ CREATE TABLE `tbl_user` (
 
 INSERT INTO `tbl_user` (`id`, `full_name`, `email`, `phone`, `password`, `photo`, `role`, `status`, `reset_token`, `token_expiry`, `reset_code`, `verification`, `e-signature`) VALUES
 (1, 'Erick Matte', 'admin@gmail.com', '099999878', '0192023a7bbd73250516f069df18b500', 'user-11.jpeg', 'Admin', 'Active', NULL, NULL, NULL, 1, NULL),
-(2, 'Ivan', 'rider1@gmail.com', '098192732', '4297f44b13955235245b2497399d7a93', NULL, 'Rider', 'Active', NULL, NULL, NULL, 1, 'signature_67a1a85e1d3818.58870827.jpg'),
+(2, 'Ivan', 'rider1@gmail.com', '098192732', '4297f44b13955235245b2497399d7a93', NULL, 'Rider', 'Active', NULL, NULL, NULL, 3, 'signature_67a5b4943a78c7.55185152.PNG'),
 (3, 'asdasdas', 'seller1@gmail.com', '0891723861', 'a8f5f167f44f4964e6c998dee827110c', 'user-user.png', 'Seller', 'Verified', NULL, NULL, NULL, 1, NULL),
 (4, 'Adsad asdasdsa', 'customer1@gmail.com', '09218759834', '4297f44b13955235245b2497399d7a93', NULL, 'customer', 'Active', NULL, NULL, NULL, 1, NULL),
 (5, 'Example Customer', 'example@gmail.com', '0978293452', '4297f44b13955235245b2497399d7a93', '', 'customer', 'Active', 'f5bc57741cd10657bb545124a304d7e5486bb70e0369ef6891b627641af3cc350d03f2ee21bd905e642118e83ce300e40c38', NULL, NULL, 1, NULL),
@@ -1994,6 +2075,12 @@ ALTER TABLE `tbl_rating`
   ADD PRIMARY KEY (`rt_id`);
 
 --
+-- Indexes for table `tbl_ratings`
+--
+ALTER TABLE `tbl_ratings`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `tbl_realtime_message`
 --
 ALTER TABLE `tbl_realtime_message`
@@ -2012,6 +2099,18 @@ ALTER TABLE `tbl_recipe_product`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `tbl_report`
+--
+ALTER TABLE `tbl_report`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tbl_return_items`
+--
+ALTER TABLE `tbl_return_items`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `tbl_rider`
 --
 ALTER TABLE `tbl_rider`
@@ -2021,6 +2120,12 @@ ALTER TABLE `tbl_rider`
 -- Indexes for table `tbl_seller`
 --
 ALTER TABLE `tbl_seller`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tbl_seller_ratings`
+--
+ALTER TABLE `tbl_seller_ratings`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -2259,25 +2364,31 @@ ALTER TABLE `tbl_product_size`
 -- AUTO_INCREMENT for table `tbl_purchase_item`
 --
 ALTER TABLE `tbl_purchase_item`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT for table `tbl_purchase_order`
 --
 ALTER TABLE `tbl_purchase_order`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `tbl_purchase_payment`
 --
 ALTER TABLE `tbl_purchase_payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `tbl_rating`
 --
 ALTER TABLE `tbl_rating`
   MODIFY `rt_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `tbl_ratings`
+--
+ALTER TABLE `tbl_ratings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tbl_realtime_message`
@@ -2298,6 +2409,18 @@ ALTER TABLE `tbl_recipe_product`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
+-- AUTO_INCREMENT for table `tbl_report`
+--
+ALTER TABLE `tbl_report`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+
+--
+-- AUTO_INCREMENT for table `tbl_return_items`
+--
+ALTER TABLE `tbl_return_items`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
 -- AUTO_INCREMENT for table `tbl_rider`
 --
 ALTER TABLE `tbl_rider`
@@ -2308,6 +2431,12 @@ ALTER TABLE `tbl_rider`
 --
 ALTER TABLE `tbl_seller`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+
+--
+-- AUTO_INCREMENT for table `tbl_seller_ratings`
+--
+ALTER TABLE `tbl_seller_ratings`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `tbl_service`
